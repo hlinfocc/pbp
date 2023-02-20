@@ -11,9 +11,6 @@ import org.nutz.dao.entity.annotation.Index;
 import org.nutz.dao.entity.annotation.Table;
 import org.nutz.dao.entity.annotation.TableIndexes;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
-import com.alibaba.excel.annotation.ExcelProperty;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -24,7 +21,6 @@ import io.swagger.annotations.ApiModelProperty;
 	@Index(fields = {"account"}, unique = true)
 })
 public class AdminInfo extends AccountInfo{
-	@ExcelIgnore
 	private static final long serialVersionUID = 1L;
 	
 	@Column("phone")
@@ -32,28 +28,24 @@ public class AdminInfo extends AccountInfo{
 	@Comment(value="手机号")
 	@ApiModelProperty(value="手机号")
 	@NotBlank(message = "手机号不能为空")
-	@ExcelProperty("手机号")
 	private String phone;
 	
 	@Column("dep_name")
 	@ColDefine(type=ColType.TEXT)
 	@Comment(value="所在部门")
 	@ApiModelProperty(value="所在部门")
-	@ExcelProperty("所在部门")
 	private String depName;
 	
 	@Column("dep_id")
 	@ColDefine(type=ColType.TEXT)
 	@Comment(value="所在部门ID")
 	@ApiModelProperty(value="所在部门ID")
-	@ExcelIgnore
 	private String depId;
 	
     @Column("email")
     @ColDefine(type = ColType.TEXT)
     @Comment(value = "电子邮件")
     @ApiModelProperty(value = "电子邮件")
-    @ExcelProperty("电子邮件")
     private String email;
 
 	public String getPhone() {

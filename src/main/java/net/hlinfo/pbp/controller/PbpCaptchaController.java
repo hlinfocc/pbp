@@ -100,7 +100,8 @@ public class PbpCaptchaController {
 		}
 	}
 	
-	public static String getURLEncoderString(String str) {
+	@SuppressWarnings("unused")
+	private String getURLEncoderString(String str) {
         String result = str;
         if (null == str) {
             return "";

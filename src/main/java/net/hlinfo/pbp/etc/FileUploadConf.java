@@ -30,30 +30,74 @@ public class FileUploadConf {
 	 */
 	private String filePoolPath = "/tmp/hlinfo/filePool";
 	
-	public String getFilePoolPath() {
-		return filePoolPath;
-	}
-	public void setFilePoolPath(String filePoolPath) {
-		this.filePoolPath = filePoolPath;
-	}
-	public String getSecuritySavePath() {
-		return securitySavePath;
-	}
-	public void setSecuritySavePath(String securitySavePath) {
-		this.securitySavePath = securitySavePath;
-	}
+	/**
+	 *  Getter method for property <b>savePath</b>.
+	 * @return property value of savePath
+	 */
 	public String getSavePath() {
 		return savePath;
 	}
+
+	/**
+	 * Setter method for property <b>savePath</b>.
+	 *
+	 * @param savePath value to be assigned to property savePath
+	 */
 	public void setSavePath(String savePath) {
 		this.savePath = savePath;
 	}
+
+	/**
+	 *  Getter method for property <b>baseUrl</b>.
+	 * @return property value of baseUrl
+	 */
 	public String getBaseUrl() {
 		return baseUrl;
 	}
+
+	/**
+	 * Setter method for property <b>baseUrl</b>.
+	 *
+	 * @param baseUrl value to be assigned to property baseUrl
+	 */
 	public void setBaseUrl(String baseUrl) {
 		this.baseUrl = baseUrl;
 	}
+
+	/**
+	 *  Getter method for property <b>securitySavePath</b>.
+	 * @return property value of securitySavePath
+	 */
+	public String getSecuritySavePath() {
+		return securitySavePath;
+	}
+
+	/**
+	 * Setter method for property <b>securitySavePath</b>.
+	 *
+	 * @param securitySavePath value to be assigned to property securitySavePath
+	 */
+	public void setSecuritySavePath(String securitySavePath) {
+		this.securitySavePath = securitySavePath;
+	}
+
+	/**
+	 *  Getter method for property <b>filePoolPath</b>.
+	 * @return property value of filePoolPath
+	 */
+	public String getFilePoolPath() {
+		return filePoolPath;
+	}
+
+	/**
+	 * Setter method for property <b>filePoolPath</b>.
+	 *
+	 * @param filePoolPath value to be assigned to property filePoolPath
+	 */
+	public void setFilePoolPath(String filePoolPath) {
+		this.filePoolPath = filePoolPath;
+	}
+
 	@Override
 	public String toString() {
 		return "FileUploadConf [savePath=" + savePath + ", baseUrl=" + baseUrl + ", getSavePath()=" + getSavePath()
@@ -62,21 +106,25 @@ public class FileUploadConf {
 	}
 	
 	/**
-	 * 文件类型
-	 * @return
+	 * 允许的文件后缀类型
+	 * @return 允许的文件后缀Map
 	 */
-	public Map<String, String> extMap() {
-		String fileext = ".pdf,.xls,.xlsx,.doc,.docx,.zip,.gz,.txt,.rar,.bz2,.xz";
-		String imgext = ".gif,.jpg,.jpeg,.png,.bmp";
-		String img2ext = ".jpg,.jpeg,.png,.bmp";
-		String videoext = ".mp4,.avi,.rmvb,.rm,.3gp,.mpeg,.mpg,.mkv,.dat,.asf,.wmv,.flv,.mov,.ogg,.ogm";
+	public Map<String, String> suffixMap() {
+		String fileSuffix = ".pdf,.xls,.xlsx,.doc,.docx,.ppt,.pptx,.zip,.gz,.txt,.rar,.bz2,.xz";
+		String imgSuffix = ".gif,.jpg,.jpeg,.png,.bmp";
+		String img2Suffix = ".jpg,.jpeg,.png,.bmp";
+		String videoSuffix = ".mp4,.avi,.rmvb,.rm,.3gp,.mpeg,.mpg,.mkv,.dat,.asf,.wmv,.flv,.mov,.ogg,.ogm";
+		String audioSuffix = ".mp3,.aac,.amr";
 		HashMap<String, String> extMap = new HashMap<String, String>();
-		extMap.put("image", imgext);
-		extMap.put("imageNoGif", img2ext);
-		extMap.put("file", fileext);
-		extMap.put("videoext", videoext);
-		extMap.put("all", fileext+","+imgext+","+videoext);
+		extMap.put("image", imgSuffix);
+		extMap.put("imageNoGif", img2Suffix);
+		extMap.put("file", fileSuffix);
+		extMap.put("video", videoSuffix);
+		extMap.put("audio", audioSuffix);
 		extMap.put("word", ".doc,.docx");
+		extMap.put("excel", ".xls,.xlsx");
+		extMap.put("ppt", ".ppt,.pptx");
+		extMap.put("all", fileSuffix + "," + imgSuffix + "," + videoSuffix + "," + audioSuffix);
 		return extMap;
 	}
 	

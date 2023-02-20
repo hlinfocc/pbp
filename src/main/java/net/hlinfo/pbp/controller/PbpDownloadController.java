@@ -9,12 +9,15 @@ import java.net.URLEncoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.nutz.dao.Cnd;
+import org.nutz.dao.Dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,11 +29,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.hlinfo.opt.Func;
 import net.hlinfo.opt.RedisUtils;
+import net.hlinfo.pbp.entity.FilesList;
 import net.hlinfo.pbp.etc.FileUploadConf;
 import net.hlinfo.pbp.opt.RedisKey;
 /**
  * 
- * @author cy
+ * @author hlinfo
  *
  */
 @Api(tags = "下载模块")
@@ -42,6 +46,9 @@ public class PbpDownloadController {
 	
 	@Autowired
 	private FileUploadConf fileUploadConf;
+	
+	@Autowired
+	private Dao dao;
 	
 	@ApiOperation(value="excel导出下载",notes="")
 	@GetMapping("/excel")
@@ -141,6 +148,58 @@ public class PbpDownloadController {
 			.contentLength(file.length())
 			.contentType(MediaType.parseMediaType("application/octet-stream"))
 			.body(new InputStreamResource(new FileInputStream(file)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			headers.remove("Content-Disposition");
+			return ResponseEntity.ok().headers(headers)
+					.contentType(MediaType.parseMediaType("text/html;charset=UTF-8"))
+					.body("<script>alert('下载文件失败，原因："+e.getMessage()+"');</script>");
+		}
+	}
+	@ApiOperation(value="根据ID下载文件",notes="")
+	@GetMapping("/file/{id:\\w+}")
+	public Object fileDownloadById(@ApiParam("文件保存在数据库中信息的ID") @PathVariable String id
+			,HttpServletRequest request,HttpServletResponse response) {
+		//设置响应头
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+		headers.add("Pragma", "no-cache");
+		headers.add("Expires", "0");
+		
+		FilesList fileInfo = dao.fetch(FilesList.class,id);
+		if(fileInfo==null) {
+			response.reset();
+			response.setContentType("text/html");
+			response.setHeader("Content-Type", "text/html;charset=UTF-8");
+			return "<script>alert('下载文件失败，文件信息不存在');</script>";
+		}
+		String fileSavePath = fileInfo.getPath();
+		File file = new File(fileSavePath);
+		if(!file.exists()) {
+			response.reset();
+			response.setContentType("text/html");
+			response.setHeader("Content-Type", "text/html;charset=UTF-8");
+			return "<script>alert('下载文件失败，文件不存在');</script>";
+		}
+		String ext = fileInfo.getSuffix();
+		if(!ext.startsWith(StrUtil.DOT)) {
+			ext = StrUtil.DOT + ext;
+		}
+		String name =fileInfo.getName();
+		if(Func.isBlank(name)) {
+			name = "下载文件-" + Func.Times.nowNumber()+ext;
+		}
+		if(!name.endsWith(ext)) {
+			name = name+ext;
+		}
+		//设置下载头部信息
+		this.setDownloadHeader(request, response, name,headers);
+		
+		try {
+			return ResponseEntity.ok().headers(headers)
+					.contentLength(file.length())
+					.contentType(MediaType.parseMediaType("application/octet-stream"))
+					.body(new InputStreamResource(new FileInputStream(file)));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			headers.remove("Content-Disposition");

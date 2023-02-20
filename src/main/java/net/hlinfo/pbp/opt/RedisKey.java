@@ -25,5 +25,6 @@ public class RedisKey {
      * member信息
      */
     public static final String MEMBERINFO = "memberInfo:";
+    public static final String SYSDICT = "SYS_DICT:";
     
 }

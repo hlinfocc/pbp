@@ -13,18 +13,17 @@ import org.nutz.dao.entity.annotation.Comment;
 import org.nutz.dao.entity.annotation.Default;
 import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.Table;
-import org.nutz.json.Json;
-import org.nutz.lang.Strings;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.swagger.annotations.ApiModelProperty;
 import net.hlinfo.opt.Func;
+import net.hlinfo.opt.Jackson;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BaseEntity implements Serializable{
-	@ExcelIgnore
 	private static final long serialVersionUID = 1L;
 	
 	@Name
@@ -32,7 +31,6 @@ public class BaseEntity implements Serializable{
 	@ColDefine(notNull=false, type=ColType.VARCHAR, width=32)
 	@Comment(value="主键ID")
 	@ApiModelProperty("权限主键，添加的时候不用传")
-	@ExcelIgnore
 	private String id;
 	
 	/**
@@ -44,7 +42,6 @@ public class BaseEntity implements Serializable{
 	@ApiModelProperty(hidden = true)
 	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@ExcelIgnore
 	private Date createTime;
 	/**
 	* 上一次更新时间
@@ -55,7 +52,6 @@ public class BaseEntity implements Serializable{
 	@ApiModelProperty(hidden = true)
 	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@ExcelIgnore
 	private Date updateTime;
 	
 	/**
@@ -65,7 +61,6 @@ public class BaseEntity implements Serializable{
 	@ColDefine(notNull=true, type=ColType.INT, width=2)
 	@Comment(value="是否删除： 0没有删除 1 删除")
 	@ApiModelProperty(hidden = true)
-	@ExcelIgnore
 	@Default("0")
 	private int isdelete;
 	/**
@@ -115,7 +110,7 @@ public class BaseEntity implements Serializable{
 	 * @return 原对象
 	 */
 	public Object insertOrUpdate(Dao dao) {
-		if(Strings.isBlank(this.getId())) {
+		if(Func.isBlank(this.getId())) {
 			init();
 		}
 		return dao.insertOrUpdate(this);
@@ -128,7 +123,7 @@ public class BaseEntity implements Serializable{
 	 * @return 原对象
 	 */
 	public <T extends BaseEntity> T insertOrUpdate(Class<T> cls, Dao dao) {
-		if(Strings.isBlank(this.getId())) {
+		if(Func.isBlank(this.getId())) {
 			init();
 		}
 		T obj = (T)this;
@@ -136,7 +131,7 @@ public class BaseEntity implements Serializable{
 	}
 	
 	public Object insertOrUpdateIgnoreNull(Dao dao) {
-		if(Strings.isNotBlank(id)) {
+		if(Func.isNotBlank(id)) {
 			Table table = this.getClass().getAnnotation(Table.class);
 			String tableName = table.value();
 			Record db = dao.fetch(tableName, Cnd.where("id", "=", getId()));
@@ -230,6 +225,6 @@ public class BaseEntity implements Serializable{
 	}
 
 	public String toString() {
-		return Json.toJson(this);
+		return Jackson.entityToString(this);
 	}
 }
