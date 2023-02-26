@@ -2,6 +2,7 @@ package net.hlinfo.pbp.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,7 +15,7 @@ import net.hlinfo.opt.Func;
 public class BaseController {
 	public final Logger log = LoggerFactory.getLogger(BaseController.class);
 	
-	public static String getLoginId() {
+	public String getLoginId() {
 		if(StpUtil.isLogin()) {			
 			String[] ids = StpUtil.getLoginIdAsString().split("-");
 			if(ids != null && ids.length >= 2) {
@@ -22,6 +23,15 @@ public class BaseController {
 			}
 		}
 		return "";
+	}
+	public int getLoginType() {
+		if(StpUtil.isLogin()) {			
+			String[] ids = StpUtil.getLoginIdAsString().split("-");
+			if(ids != null && ids.length >= 2) {
+				return Func.string2int(ids[0]);
+			}
+		}
+		return -1;
 	}
 	
 	protected String outHtml(String title, String msg,String error,String url) {
