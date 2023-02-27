@@ -1,6 +1,5 @@
 package net.hlinfo.pbp.controller;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.checkerframework.checker.units.qual.C;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.nutz.dao.Chain;
@@ -38,7 +36,6 @@ import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.http.HtmlUtil;
 import io.swagger.annotations.Api;
@@ -52,7 +49,9 @@ import net.hlinfo.pbp.entity.ArticleCategory;
 import net.hlinfo.pbp.entity.ArticleCollection;
 import net.hlinfo.pbp.entity.ArticleInfo;
 import net.hlinfo.pbp.entity.VisitHistoryRecord;
+import net.hlinfo.pbp.opt.vo.ArticleCollectionParamVo;
 import net.hlinfo.pbp.opt.vo.ArticleParams;
+import net.hlinfo.pbp.opt.vo.ArticlePictureParamVo;
 import net.hlinfo.pbp.opt.vo.KV;
 import net.hlinfo.pbp.opt.vo.UpdateBatchVo;
 import net.hlinfo.pbp.service.AreacodeService;
@@ -131,8 +130,8 @@ public class PbpArticleInfoController extends BaseController{
 			data.setCountyname(areacodeService.getAreatitle(data.getCountycode()));
 		}
 		
-		if(Func.isBlank(data.getTitlePicurl())) {
-			data.setTitlePicurl("");
+		if(Func.isBlank(data.getTitlePicUrl())) {
+			data.setTitlePicUrl("");
 		}
 		if(Func.isBlank(data.getFocusPicUrl())) {
 			data.setFocusPicUrl("");
@@ -162,9 +161,9 @@ public class PbpArticleInfoController extends BaseController{
 		data = (ArticleInfo) data.insertOrUpdateIgnoreNull(dao);
 		if(data != null) {
 			opLogsService.AdminAddOpLogs("编辑文章", " 文章id："+data.getId(), request);
-			return new Resp().ok("操作成功", data);
+			return new Resp<ArticleInfo>().ok("操作成功", data);
 		}else {
-			return new Resp().error("操作失败");
+			return new Resp<ArticleInfo>().error("操作失败");
 		}
 	}
 	
@@ -172,24 +171,24 @@ public class PbpArticleInfoController extends BaseController{
 	@PostMapping("/modifyStatus")
 	public Resp<ArticleInfo> modifyStatus(@RequestBody ArticleInfo data, HttpServletRequest request){
 		if(Func.isBlank(data.getId()) || data.getStatus()<=0) {
-			return new Resp().error("参数不能为空");
+			return new Resp<ArticleInfo>().error("参数不能为空");
 		}
 		Chain chain = Chain.make("status", data.getStatus());
 		int rs = dao.update(ArticleInfo.class, chain, Cnd.where("id", "=", data.getId()));
 		if(rs>0) {
 			opLogsService.AdminAddOpLogs("修改文章状态", " 文章id："+data.getId()+",状态修改为："+data.getStatus(), request);
-			return new Resp().ok("操作成功", data);
+			return new Resp<ArticleInfo>().ok("操作成功", data);
 		}else {
-			return new Resp().error("操作失败");
+			return new Resp<ArticleInfo>().error("操作失败");
 		}
 	}
 	
 	@ApiOperation(value="批量修改数据")
 	@PostMapping("/batchModifyStatus")
-	public Resp<ArticleInfo> batchModifyStatus(@RequestBody UpdateBatchVo data, HttpServletRequest request){
+	public Resp<Integer> batchModifyStatus(@RequestBody UpdateBatchVo data, HttpServletRequest request){
 		if(data.getIds() == null || data.getIds().size() <= 0
 				|| data.getDatas() == null || data.getDatas().size() <= 0) {
-			return new Resp().error("参数不能为空");
+			return new Resp<Integer>().error("参数不能为空");
 		}
 		Chain chain = null;
 		for(int i = 0; i < data.getDatas().size(); i ++){
@@ -207,9 +206,9 @@ public class PbpArticleInfoController extends BaseController{
 		int rs = dao.update(ArticleInfo.class, chain, Cnd.where("id", "in", data.getIds()));
 		if(rs>0) {
 			opLogsService.AdminAddOpLogs("批量修改文章数据", " 文章id："+data.getIds().toString(), request);
-			return new Resp().ok("操作成功", data);
+			return new Resp<Integer>().ok("操作成功",rs);
 		}else {
-			return new Resp().error("操作失败");
+			return new Resp<Integer>().error("操作失败");
 		}
 	}
 
@@ -222,7 +221,7 @@ public class PbpArticleInfoController extends BaseController{
 			String keywords
 			, HttpServletRequest request){
 		if(Func.isBlank(id)) {
-			return new Resp().error("参数不能为空");
+			return new Resp<ArticleInfo>().error("参数不能为空");
 		}
 		ArticleInfo obj = dao.fetch(ArticleInfo.class, id);
 		if(StpUtil.isLogin() && StpUtil.hasPermissionOr(AuthType.Root.PERM,AuthType.Admin.PERM)) {
@@ -246,7 +245,7 @@ public class PbpArticleInfoController extends BaseController{
 				obj.setContent(obj.getContent().replace(keywords, keywordsRed));
 			}
 		}
-		return new Resp().ok("获取成功",obj);
+		return new Resp<ArticleInfo>().ok("获取成功",obj);
 	}
 	
 	@ApiOperation(value="更新浏览量")
@@ -254,7 +253,7 @@ public class PbpArticleInfoController extends BaseController{
 	@SaIgnore
 	public Resp<String> visit(@ApiParam(value="id",required = true) @RequestParam(name="id",required = true) String id, HttpServletRequest request){
 		if(Func.isBlank(id)) {
-			return new Resp().error("参数不能为空");
+			return new Resp<String>().error("参数不能为空");
 		}
 		ArticleInfo obj = dao.fetch(ArticleInfo.class, id);
 		if(obj!=null) {
@@ -270,9 +269,9 @@ public class PbpArticleInfoController extends BaseController{
 			rh.setUserAgent(request.getHeader("user-agent"));
 			rh.insert(dao);
 			dao.update(ArticleInfo.class, Chain.makeSpecial("visit", "+1"), Cnd.where("id","=", id));
-			return new Resp().ok("操作成功");
+			return new Resp<String>().ok("操作成功");
 		}
-		return new Resp().FAIL();
+		return new Resp<String>().FAIL();
 	}
 	
 	@SuppressWarnings("unlikely-arg-type")
@@ -281,10 +280,10 @@ public class PbpArticleInfoController extends BaseController{
 	@SaIgnore
 	public Resp<List<ArticleInfo>> postList(@RequestBody ArticleParams ap,HttpServletRequest request){
 		if(ap==null) {
-			return new Resp().error("参数不能为空");
+			return new Resp<List<ArticleInfo>>().error("参数不能为空");
 		}
 		Cnd cnd = Cnd.where("isdelete", "=", 0);
-		List<String> ids = new ArrayList<String> ();
+//		List<String> ids = new ArrayList<String> ();
 		/*if(StpUtil.isLogin() && StpUtil.hasPermission(C.LoginType.MEMBER_PERM_NAME)) {
 			String[] memids = StpUtil.getLoginIdAsString().split("-");
 			Cnd cnd2 = Cnd.where("memid", "=", memids[1]);
@@ -446,81 +445,62 @@ public class PbpArticleInfoController extends BaseController{
 		return new Resp().ok("获取成功").data(new QueryResult(list, pager));
 	}
 	
-	@ApiOperation(value="焦点图列表")
-	@GetMapping("/focusPicList")
-	public Resp<List<ArticleInfo>> focusPicList(
-			@ApiParam("父级分类ID")
-			@RequestParam(name="pid", defaultValue = "") 
-			String pid,
-			@ApiParam("二分类分类ID")
-			@RequestParam(name="sid", defaultValue = "") 
-			String sid,
-			@ApiParam("三级分类分类ID")
-			@RequestParam(name="tid", defaultValue = "") 
-			String tid,
-			@ApiParam(value = "页码",defaultValue = "1")
-			@RequestParam(name="page", defaultValue = "1") 
-			int page,
-			@ApiParam(value = "每页显示条数",defaultValue = "5")
-			@RequestParam(name="limit", defaultValue = "5") 
-			int limit,
+	@ApiOperation(value="标题图|焦点图列表")
+	@PostMapping("/pictureList")
+	public Resp<List<ArticleInfo>> pictureList(
+			@RequestBody ArticlePictureParamVo param,
 			HttpServletRequest request){
 		Cnd cnd = Cnd.where("isdelete", "=", 0);
 		cnd.and("status","=",2);
 		cnd.and("auditStatus","=",1);
-		Pager pager = dao.createPager(page, limit);
+		Pager pager = dao.createPager(param.getPage(), param.getLimit());
 		
-		List<String> acids = new ArrayList<String>();
-		if(Func.isNotBlank(pid)) {
-			acids.add(pid);
-		}
-		if(Func.isNotBlank(sid)) {
-			acids.add(sid);
-		}
-		if(Func.isNotBlank(tid)) {
-			acids.add(tid);
-		}
-		if(acids!=null && acids.size()>0) {
+		if(param.getAcids()!=null && param.getAcids().size()>0) {
 			List<List<String>> acidsarr = new ArrayList<List<String>>();
-			acidsarr.add(acids);
+			acidsarr.add(param.getAcids());
 			cnd.and(new Static("acids @> '"+Jackson.toJSONString(acidsarr)+"'"));
 		}
-		
-		SqlExpressionGroup exp = Cnd.exps(new Static("focus_pic_url is not null"));
-		exp.and("focusPicUrl",  "!=", "");
-		cnd.and(exp);
+		if(param.getPictureType()==1) {
+			SqlExpressionGroup exp = Cnd.exps(new Static("title_pic_url is not null"));
+			exp.and("titlePicUrl",  "!=", "");
+			cnd.and(exp);
+		}else if(param.getPictureType()==2) {			
+			SqlExpressionGroup exp = Cnd.exps(new Static("focus_pic_url is not null"));
+			exp.and("focusPicUrl",  "!=", "");
+			cnd.and(exp);
+		}
 		
 		pager.setRecordCount(dao.count(ArticleInfo.class, cnd));
-		cnd.limit(page, limit);
+		cnd.limit(param.getPage(), param.getLimit());
 		
 		cnd.desc("hots");
 		cnd.desc("pushdate");
 		cnd.desc("createtime");
 		
-		FieldMatcher matcher = FieldMatcher.make(null, "^content|html|pdfUrl$", false);
+		FieldMatcher matcher = FieldMatcher.make(null, "^content|textContent$", false);
 		List<ArticleInfo> list = dao.query(ArticleInfo.class, cnd,pager,matcher);
 		return new Resp().ok("获取成功").data(new QueryResult(list, pager));
 	}
 	
 	@ApiOperation(value="删除")
 	@DeleteMapping("/delete")
-	public Resp<ArticleInfo> delete(@RequestParam("id") String id, HttpServletRequest request){
+	public Resp<String> delete(@RequestParam("id") String id, HttpServletRequest request){
 		if(Strings.isBlank(id)) {
-			return new Resp().error("id不能为空");
+			return new Resp<String>().error("id不能为空");
 		}
 		ArticleInfo obj = dao.fetch(ArticleInfo.class, id);
 		if(obj==null) {
-			return new Resp().error("删除失败，数据不存在");
+			return new Resp<String>().error("删除失败，数据不存在");
 		}
 		if(obj.getStatus()!=3) {
-			return new Resp().error("仅撤稿状态才能删除");
+			return new Resp<String>().error("仅撤稿状态才能删除");
 		}
 		int res = obj.deletedSoft(dao);
 		if(res > 0) {
 			opLogsService.AdminAddOpLogs("删除文章", " 文章id："+id, request);
-			return new Resp().ok("删除成功");
+			return new Resp<String>().ok("删除成功");
 		}else {
-			return new Resp().error("删除失败");
+			return new Resp<String>().error("删除失败");
 		}
 	}
 	
@@ -530,9 +510,9 @@ public class PbpArticleInfoController extends BaseController{
 		Chain chain = Chain.make("isdelete", 1);
 		int rs = dao.update(ArticleInfo.class, chain, Cnd.where("status", "=", 3));
 		if(rs > 0) {
-			return new Resp().SUCCESS();
+			return new Resp<String>().SUCCESS();
 		}else {
-			return new Resp().FAIL();
+			return new Resp<String>().FAIL();
 		}
 	}
 	
@@ -562,78 +542,48 @@ public class PbpArticleInfoController extends BaseController{
 	}
 
 	@ApiOperation(value="获取用户收藏的文章数据")
-	@GetMapping("/collectList")
+	@PostMapping("/collectList")
 	@SaCheckPermission(value= {AuthType.Member.PERM,AuthType.Merchant.PERM,AuthType.Teacher.PERM,AuthType.Student.PERM,AuthType.Other.PERM},mode=SaMode.OR)
 	@SaCheckLogin
 	public Resp<List<ArticleInfo>> collectList(
-			@ApiParam("一级分类ID")
-			@RequestParam(name="pid", defaultValue = "") 
-			String pid,
-			@ApiParam("子分类分类ID")
-			@RequestParam(name="sid", defaultValue = "") 
-			String sid,
-			@ApiParam("三级分类分类ID")
-			@RequestParam(name="tid", defaultValue = "") 
-			String tid,
-			@ApiParam(value = "关键词")
-			@RequestParam(name="keywords", defaultValue = "") 
-			String keywords,
-			@ApiParam(value = "状态：1草稿，2发布，3撤稿, 4归档,0全部",defaultValue = "0")
-			@RequestParam(name="status", defaultValue = "0") 
-			int status,
-			@ApiParam(value = "页码",defaultValue = "1")
-			@RequestParam(name="page", defaultValue = "1") 
-			int page,
-			@ApiParam(value = "每页显示条数",defaultValue = "20")
-			@RequestParam(name="limit", defaultValue = "20") 
-			int limit
+			@RequestBody ArticleCollectionParamVo param
 			, HttpServletRequest request){
 		
 		String[] memids = StpUtil.getLoginIdAsString().split("-");
 		Cnd cnd = Cnd.where("memid", "=", memids[1]);
 		List<ArticleCollection> acs = dao.query(ArticleCollection.class, cnd);
-		Pager pager = dao.createPager(page, limit);
+		Pager pager = dao.createPager(param.getPage(), param.getLimit());
 		List<String> ids = new ArrayList<String> ();
 		if(acs == null || acs.size() <= 0) {
-			return Resp.pages(new ArrayList(), 0,page, limit);
+			return Resp.pages(new ArrayList(), 0,param.getPage(), param.getLimit());
 		}else {
 			acs.forEach(item -> ids.add(item.getArtid()));
 		}
 		
 		cnd = Cnd.where("isdelete", "=", 0);
 		cnd.and("id", "in", ids);
-		if(status>0) {
-			cnd.and("status", "=", status);
+		if(param.getStatus()>0) {
+			cnd.and("status", "=", param.getStatus());
 		}
-		List<String> acids = new ArrayList<String>();
-		if(Func.isNotBlank(pid)) {
-			acids.add(pid);
-		}
-		if(Func.isNotBlank(sid)) {
-			acids.add(sid);
-		}
-		if(Func.isNotBlank(tid)) {
-			acids.add(tid);
-		}
-		if(acids!=null && acids.size()>0) {
+		
+		if(param.getAcids()!=null && param.getAcids().size()>0) {
 			List<List<String>> acidsarr = new ArrayList<List<String>>();
-			acidsarr.add(acids);
+			acidsarr.add(param.getAcids());
 			cnd.and(new Static("acids @> '"+Jackson.toJSONString(acidsarr)+"'"));
 		}
-		if(Strings.isNotBlank(keywords)) {
-			SqlExpressionGroup exp = Cnd.exps("title", "like", "%"+keywords+"%")
-					.or("content", "like", "%"+keywords+"%");
+		if(Strings.isNotBlank(param.getKeywords())) {
+			SqlExpressionGroup exp = Cnd.exps("title", "like", "%"+param.getKeywords()+"%")
+					.or("content", "like", "%"+param.getKeywords()+"%");
     		cnd.and(exp);
 		}
 		pager.setRecordCount(dao.count(ArticleInfo.class, cnd));
-		cnd.limit(page, limit);
+		cnd.limit(param.getPage(), param.getLimit());
 		cnd.desc("hots");
 		cnd.desc("pushdate");
 		cnd.desc("createtime");
 		FieldMatcher matcher = FieldMatcher.make(null, "^content|text_content$", false);
 		System.out.println(cnd);
 		List<ArticleInfo> list = dao.query(ArticleInfo.class, cnd,pager,matcher);
-		
 		return new Resp().ok("获取成功").data(new QueryResult(list, pager));
 	}
 	
@@ -642,7 +592,7 @@ public class PbpArticleInfoController extends BaseController{
 	public Resp<ArticleInfo> typeseting(@RequestBody ArticleInfo article
 			, HttpServletRequest request){
 		if(Func.isBlank(article.getContent())) {
-			return new Resp().error("文章内容不能为空");
+			return new Resp<ArticleInfo>().error("文章内容不能为空");
 		}
 		String html = article.getContent();
 		Document doc = Jsoup.parse(html);
@@ -657,21 +607,21 @@ public class PbpArticleInfoController extends BaseController{
 		doc = Jsoup.parse(html);
 		articleService.typesetingNode(doc);
 		article.setContent(doc.getElementsByTag("body").html());
-		return new Resp().ok("OK").data(article);
+		return new Resp<ArticleInfo>().ok("OK").data(article);
 	}
 	
 	@ApiOperation(value="文章审核")
 	@PostMapping("/articleAudit")
-	public Resp articleAudit(@RequestBody UpdateBatchVo data
+	public Resp<Integer> articleAudit(@RequestBody UpdateBatchVo data
 			, HttpServletRequest request) {
 		String[] userids = StpUtil.getLoginIdAsString().split("-");
 		AdminInfo user = articleService.getUserInfo(userids[1]);
 		if(user.getUserLevel()!=0) {
-			return new Resp().error("您没有审核权限，仅超级管理员可以审核");
+			return new Resp<Integer>().error("您没有审核权限，仅超级管理员可以审核");
 		}
 		if(data.getIds() == null || data.getIds().size() <= 0
 				|| data.getDatas() == null || data.getDatas().size() <= 0) {
-			return new Resp().error("参数不能为空");
+			return new Resp<Integer>().error("参数不能为空");
 		}
 		Chain chain = null;
 		for(int i = 0; i < data.getDatas().size(); i ++){
@@ -689,9 +639,9 @@ public class PbpArticleInfoController extends BaseController{
 		int rs = dao.update(ArticleInfo.class, chain, Cnd.where("id", "in", data.getIds()));
 		if(rs>0) {
 			opLogsService.AdminAddOpLogs("审核文章数据", "文章id："+data.getIds().toString(), request);
-			return new Resp().ok("操作成功", data);
+			return new Resp<Integer>().ok("操作成功", rs);
 		}else {
-			return new Resp().error("操作失败");
+			return new Resp<Integer>().error("操作失败");
 		}
 	}
 	
@@ -716,21 +666,21 @@ public class PbpArticleInfoController extends BaseController{
 			int limit,
 			HttpServletRequest request){
 		if(Func.isBlank(title)) {
-			return new Resp().error("标题不能为空");
+			return new Resp<List<ArticleInfo>>().error("标题不能为空");
 		}
 		Cnd cnd = Cnd.where("isdelete", "=", 0);
 		
 		SqlExpressionGroup exp = null;
 		if(titleType==1) {
 			exp = Cnd.exps("title", "=", title);
-			exp.or("docno",  "=", keywords);
+			exp.or("issuedNumber",  "=", keywords);
 			if(Func.isNotBlank(keywords)) {
-				exp.or("docno",  "=", keywords);
+				exp.or("issuedNumber",  "=", keywords);
 			}
 		}else {
 			exp = Cnd.exps("title", "like", "%"+title+"%");
 			if(Func.isNotBlank(keywords)) {
-				exp.or("docno",  "like", "%"+keywords+"%");
+				exp.or("issuedNumber",  "like", "%"+keywords+"%");
 			}
 		}
 		
@@ -753,7 +703,7 @@ public class PbpArticleInfoController extends BaseController{
 			}
 		}
 		if(list==null || list.size()<=0) {
-			return new Resp().error("未检测到重复数据");
+			return new Resp<List<ArticleInfo>>().error("未检测到重复数据");
 		}
 		return new Resp().ok("获取成功").data(new QueryResult(list, pager));
 	}

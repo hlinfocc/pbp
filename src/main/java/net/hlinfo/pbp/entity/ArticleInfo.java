@@ -66,11 +66,11 @@ public class ArticleInfo extends BaseEntity{
 	@NotBlank(message = "文章标题不能为空")
 	private String title;
 	
-	@Column("title_picurl")
+	@Column("title_pic_url")
 	@ColDefine(type=ColType.TEXT)
 	@Comment(value="标题图")
 	@ApiModelProperty(value="标题图")
-	private String titlePicurl;
+	private String titlePicUrl;
 	
 	@Column("focus_pic_url")
 	@ColDefine(type=ColType.TEXT)
@@ -345,20 +345,20 @@ public class ArticleInfo extends BaseEntity{
 	}
 
 	/**
-	 *  Getter method for property <b>titlePicurl</b>.
-	 * @return property value of titlePicurl
+	 *  Getter method for property <b>titlePicUrl</b>.
+	 * @return property value of titlePicUrl
 	 */
-	public String getTitlePicurl() {
-		return titlePicurl;
+	public String getTitlePicUrl() {
+		return titlePicUrl;
 	}
 
 	/**
-	 * Setter method for property <b>titlePicurl</b>.
+	 * Setter method for property <b>titlePicUrl</b>.
 	 *
-	 * @param titlePicurl value to be assigned to property titlePicurl
+	 * @param titlePicUrl value to be assigned to property titlePicUrl
 	 */
-	public void setTitlePicurl(String titlePicurl) {
-		this.titlePicurl = titlePicurl;
+	public void setTitlePicUrl(String titlePicUrl) {
+		this.titlePicUrl = titlePicUrl;
 	}
 
 	/**
