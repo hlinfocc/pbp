@@ -41,7 +41,7 @@ import net.hlinfo.opt.pager.MPager;
 import net.hlinfo.pbp.entity.AdminInfo;
 import net.hlinfo.pbp.etc.EnvConfig;
 import net.hlinfo.pbp.opt.PwdUtils;
-import net.hlinfo.pbp.opt.RedisKey;
+import net.hlinfo.pbp.opt.PbpRedisKey;
 import net.hlinfo.pbp.opt.Resp;
 import net.hlinfo.pbp.opt.dto.AdminLoginResultDTO;
 import net.hlinfo.pbp.opt.dto.PermDTO;
@@ -146,7 +146,7 @@ public class PbpAdminController extends BaseController {
 			return Resp.ERROR("出错了，参数不能为空");
 		}
 		String verifycodekey = Func.isBlank(dto.getTime())?Lang.getIP(request):(Lang.getIP(request)+":"+dto.getTime());
-		String key = RedisKey.VERIFYCODE + verifycodekey;
+		String key = PbpRedisKey.VERIFYCODE + verifycodekey;
 		String code = redisCache.getObject(key);
 		
 		if(env.isprod()) {
@@ -225,7 +225,7 @@ public class PbpAdminController extends BaseController {
 		result.setSuccessUrl(permissionService.getLoginSuccessRoutePath(admin.getId()));
 		
 //		opLogsService.AdminAddOpLogs("后台管理员登录", "用户id："+admin.getId(),admin.getAccount(), request);
-		redisCache.resetCacheData(RedisKey.ADMININFO+admin.getId(), admin);
+		redisCache.resetCacheData(PbpRedisKey.ADMININFO+admin.getId(), admin);
 		return Resp.OK("登陆成功",result);
 	}
 	

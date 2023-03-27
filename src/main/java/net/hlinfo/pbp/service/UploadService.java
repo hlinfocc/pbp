@@ -44,6 +44,12 @@ public class UploadService {
      */
     public static final long DEFAULT_CHUNK_SIZE = 2 * 1024 * 1024;
     
+    /**
+     * 文件名 正则字符串
+     * 文件名支持的字符串：字母数字中文.-_()（） 除此之外的字符将被删除
+     */
+    private static String FILE_NAME_REGEX = "[^A-Za-z\\.\\(\\)\\-（）\\_0-9\\u4e00-\\u9fa5]";
+    
 	@Autowired
 	private FileUploadConf fileUploadConf;
 	
@@ -95,11 +101,15 @@ public class UploadService {
 				orgFileName = URLUtil.decode(orgFileName);
 			}catch(Exception e) {}
 			data.init();
-			data.setName(orgFileName);
+			data.setName(getFileName(orgFileName));
 			data.setMimeType(file.getContentType());
 			data.setPath(saveFile.getAbsolutePath());
 			data.setFileHash(SmUtil.sm3(new FileInputStream(saveFile)));
-			data.setUrl(url);
+			if(fileUploadConf.isRelative()) {				
+				data.setUrl(saveFilePath.replace(File.separator, "/"));
+			}else {
+				data.setUrl(url);
+			}
 			data.setSuffix(fileSuffix);
 			data.setSize(saveFile.length());
 			String userid = "anonymous";
@@ -439,5 +449,31 @@ public class UploadService {
         } else {
             return Resp.ERROR("极速秒传失败");
         }
+    }
+    
+    /**
+     * 判断文件名是否带盘符，重新处理
+     * @param fileName
+     * @return
+     */
+    public static String getFileName(String fileName){
+        // 判断是否带有盘符信息
+        // 检查Unix样式的路径
+        int unixSep = fileName.lastIndexOf('/');
+        // 检查Windows样式的路径
+        int winSep = fileName.lastIndexOf('\\');
+        // Cut off at latest possible point
+        int pos = (winSep > unixSep ? winSep : unixSep);
+        if (pos != -1)  {
+            // Any sort of path separator found...
+            fileName = fileName.substring(pos + 1);
+        }
+        //替换上传文件名字的特殊字符
+        fileName = fileName.replace("=","").replace(",","").replace("&","")
+                .replace("#", "").replace("“", "").replace("”", "");
+        //替换上传文件名字中的空格
+        fileName=fileName.replaceAll("\\s","");
+        fileName = fileName.replaceAll(FILE_NAME_REGEX, "");
+        return fileName;
     }
 }

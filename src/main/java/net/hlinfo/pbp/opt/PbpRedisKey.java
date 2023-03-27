@@ -1,14 +1,18 @@
 package net.hlinfo.pbp.opt;
 
-public class RedisKey {
+public class PbpRedisKey {
 	
 	/**
 	 * 验证码 <br>
 	 */
 	public static final String VERIFYCODE = "verifyCode:";
+	/**
+	 * 验证码密钥，加入密钥作为混淆
+	 */
+	public static String VERIFYCODE_KEY = "9eac95ca-cca7-11ed-b316-aba22fcee160";
     
     /** 验证码 失效时间 秒*/
-    public static final int VERIFYCODE_EXPIRE = 60*5;
+    public static final int VERIFYCODE_EXPIRE = 2*60;
     /**
      * 下载
      */

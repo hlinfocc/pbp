@@ -28,7 +28,7 @@ import io.swagger.annotations.ApiParam;
 import net.hlinfo.opt.RedisUtils;
 import net.hlinfo.pbp.entity.SysDictList;
 import net.hlinfo.pbp.entity.SysDictType;
-import net.hlinfo.pbp.opt.RedisKey;
+import net.hlinfo.pbp.opt.PbpRedisKey;
 import net.hlinfo.pbp.opt.Resp;
 import net.hlinfo.pbp.opt.vo.KV;
 import net.hlinfo.pbp.service.DictService;
@@ -83,7 +83,7 @@ public class PbpSysDictListController {
 
 		SysDictList rs = (SysDictList)data.insertOrUpdate(dao);
 		if(rs!=null) {
-			redisCache.resetCacheData(RedisKey.SYSDICT+rs.getFieldCode(), rs);
+			redisCache.resetCacheData(PbpRedisKey.SYSDICT+rs.getFieldCode(), rs);
 		}
 		return Resp.OBJ_O(data);
 	}
@@ -102,7 +102,7 @@ public class PbpSysDictListController {
 		tea.setIsdelete(1);
 		int qty = dao.update(tea);
 		if(qty>0) {
-			redisCache.deleteObject(RedisKey.SYSDICT+tea.getFieldCode());
+			redisCache.deleteObject(PbpRedisKey.SYSDICT+tea.getFieldCode());
 		}
 		return Resp.OBJ_O(qty);
 	}

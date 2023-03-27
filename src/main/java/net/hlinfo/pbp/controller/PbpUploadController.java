@@ -220,5 +220,6 @@ public class PbpUploadController {
 		FilesList fileInfo = dao.fetch(FilesList.class,cnd);
 		return Resp.OK("获取成功",fileInfo);
 	}
+	
 }
 

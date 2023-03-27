@@ -29,7 +29,28 @@ public class FileUploadConf {
 	 * 文件池地址
 	 */
 	private String filePoolPath = "/tmp/hlinfo/filePool";
+	/**
+	 * 是否启用相对路径,true情况下返回的文件地址不包含主机部分
+	 */
+	private boolean relative = false;
 	
+	/**
+	 *  是否启用相对路径,true情况下返回的文件地址不包含主机部分
+	 * @return property value of relative
+	 */
+	public boolean isRelative() {
+		return relative;
+	}
+
+	/**
+	 * 是否启用相对路径,true情况下返回的文件地址不包含主机部分
+	 *
+	 * @param relative value to be assigned to property relative
+	 */
+	public void setRelative(boolean relative) {
+		this.relative = relative;
+	}
+
 	/**
 	 *  Getter method for property <b>savePath</b>.
 	 * @return property value of savePath

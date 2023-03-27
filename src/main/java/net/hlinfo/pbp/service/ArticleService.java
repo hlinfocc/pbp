@@ -22,7 +22,7 @@ import net.hlinfo.opt.Func;
 import net.hlinfo.opt.RedisUtils;
 import net.hlinfo.pbp.entity.AdminInfo;
 import net.hlinfo.pbp.entity.ArticleCategory;
-import net.hlinfo.pbp.opt.RedisKey;
+import net.hlinfo.pbp.opt.PbpRedisKey;
 
 @Service
 public class ArticleService {
@@ -195,7 +195,7 @@ public class ArticleService {
 	 @return
 	 */
 	public AdminInfo getUserInfo(String userid) {
-		AdminInfo memberInfo = redisUtils.getObject(RedisKey.ADMININFO+userid);
+		AdminInfo memberInfo = redisUtils.getObject(PbpRedisKey.ADMININFO+userid);
 		if(memberInfo==null) {
 			memberInfo = dao.fetch(AdminInfo.class,userid);
 		}

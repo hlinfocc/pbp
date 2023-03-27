@@ -17,7 +17,7 @@ import net.hlinfo.opt.Func;
 import net.hlinfo.opt.RedisUtils;
 import net.hlinfo.pbp.entity.AdminInfo;
 import net.hlinfo.pbp.entity.Oplogs;
-import net.hlinfo.pbp.opt.RedisKey;
+import net.hlinfo.pbp.opt.PbpRedisKey;
 
 /**
  * 操作日志处理
@@ -68,11 +68,11 @@ public class OpLogsService {
 		
 		try {
 			String loginId =  StpUtil.getLoginId()==null?"":StpUtil.getLoginId().toString().split("-")[1];
-			userInfo = redisCache.getObject(RedisKey.ADMININFO+loginId);
+			userInfo = redisCache.getObject(PbpRedisKey.ADMININFO+loginId);
 			if(userInfo==null) {
 				userInfo = dao.fetch(AdminInfo.class,loginId);
 				if(userInfo!=null) {
-					redisCache.setObject(RedisKey.ADMININFO+loginId, userInfo);
+					redisCache.setObject(PbpRedisKey.ADMININFO+loginId, userInfo);
 				}
 			}
 			Oplogs logs = new Oplogs();
@@ -95,11 +95,11 @@ public class OpLogsService {
 		
 		try {
 			String loginId =  StpUtil.getLoginId()==null?"":StpUtil.getLoginId().toString().split("-")[1];
-			userInfo = redisCache.getObject(RedisKey.ADMININFO+loginId);
+			userInfo = redisCache.getObject(PbpRedisKey.ADMININFO+loginId);
 			if(userInfo==null) {
 				userInfo = dao.fetch(AdminInfo.class,loginId);
 				if(userInfo!=null) {
-					redisCache.setObject(RedisKey.ADMININFO+loginId, userInfo);
+					redisCache.setObject(PbpRedisKey.ADMININFO+loginId, userInfo);
 				}
 			}
 			Oplogs logs = new Oplogs();
@@ -122,11 +122,11 @@ public class OpLogsService {
 		
 		try {
 			String loginId =  StpUtil.getLoginId()==null?"":StpUtil.getLoginId().toString().split("-")[1];
-			userInfo = redisCache.getObject(RedisKey.ADMININFO+loginId);
+			userInfo = redisCache.getObject(PbpRedisKey.ADMININFO+loginId);
 			if(userInfo==null) {
 				userInfo = dao.fetch(AdminInfo.class,loginId);
 				if(userInfo!=null) {
-					redisCache.setObject(RedisKey.ADMININFO+loginId, userInfo);
+					redisCache.setObject(PbpRedisKey.ADMININFO+loginId, userInfo);
 				}
 			}
 			Oplogs logs = new Oplogs();

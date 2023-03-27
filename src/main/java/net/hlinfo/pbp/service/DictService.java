@@ -16,7 +16,7 @@ import net.hlinfo.opt.Func;
 import net.hlinfo.opt.Jackson;
 import net.hlinfo.opt.RedisUtils;
 import net.hlinfo.pbp.entity.SysDictList;
-import net.hlinfo.pbp.opt.RedisKey;
+import net.hlinfo.pbp.opt.PbpRedisKey;
 import net.hlinfo.pbp.opt.vo.KV;
 
 
@@ -38,12 +38,12 @@ public class DictService {
 	 * @return 数据字典对象
 	 */
 	public SysDictList getDict(String fieldCode){
-		SysDictList dict = redisCache.getObject(RedisKey.SYSDICT+fieldCode);
+		SysDictList dict = redisCache.getObject(PbpRedisKey.SYSDICT+fieldCode);
 		if(dict == null) {
 			dict = dao.fetch(SysDictList.class
 				, Cnd.where("isdelete", "=", 0)
 				.and("field_code", "=", fieldCode));
-			redisCache.setObject(RedisKey.SYSDICT+fieldCode, dict);
+			redisCache.setObject(PbpRedisKey.SYSDICT+fieldCode, dict);
 		}
 		return dict;
 	}
@@ -53,12 +53,12 @@ public class DictService {
 	 * @return 字段值
 	 */
 	public String getStrDict(String fieldCode) {
-		SysDictList dict = redisCache.getObject(RedisKey.SYSDICT+fieldCode);
+		SysDictList dict = redisCache.getObject(PbpRedisKey.SYSDICT+fieldCode);
 		if(dict == null) {
 			dict = dao.fetch(SysDictList.class
 				, Cnd.where("isdelete", "=", 0)
 				.and("field_code", "=", fieldCode));
-			redisCache.setObject(RedisKey.SYSDICT+fieldCode, dict);
+			redisCache.setObject(PbpRedisKey.SYSDICT+fieldCode, dict);
 		}
 		return dict != null && dict.getFieldType() == 1 ? dict.getFieldValue() : "";
 	}
@@ -85,12 +85,12 @@ public class DictService {
 	 * @return 整型字段值
 	 */
 	public int getIntDict(String fieldCode) {
-		SysDictList dict = redisCache.getObject(RedisKey.SYSDICT+fieldCode);
+		SysDictList dict = redisCache.getObject(PbpRedisKey.SYSDICT+fieldCode);
 		if(dict == null) {
 			dict = dao.fetch(SysDictList.class
 				, Cnd.where("isdelete", "=", 0)
 				.and("field_code", "=", fieldCode));
-			redisCache.setObject(RedisKey.SYSDICT+fieldCode, dict);
+			redisCache.setObject(PbpRedisKey.SYSDICT+fieldCode, dict);
 		}
 		String v = dict != null && dict.getFieldType() == 1 ? dict.getFieldValue() : "";
 		if(Func.isNotBlank(v)) {
@@ -108,12 +108,12 @@ public class DictService {
 	 * @return 整型字段值
 	 */
 	public long getLongDict(String fieldCode) {
-		SysDictList dict = redisCache.getObject(RedisKey.SYSDICT+fieldCode);
+		SysDictList dict = redisCache.getObject(PbpRedisKey.SYSDICT+fieldCode);
 		if(dict == null) {
 			dict = dao.fetch(SysDictList.class
 					, Cnd.where("isdelete", "=", 0)
 					.and("field_code", "=", fieldCode));
-			redisCache.setObject(RedisKey.SYSDICT+fieldCode, dict);
+			redisCache.setObject(PbpRedisKey.SYSDICT+fieldCode, dict);
 		}
 		String v = dict != null && dict.getFieldType() == 1 ? dict.getFieldValue() : "";
 		if(Func.isNotBlank(v)) {
@@ -131,12 +131,12 @@ public class DictService {
 	 * @return BigDeciaml型字段值
 	 */
 	public BigDecimal getBigDeciamlDict(String fieldCode) {
-		SysDictList dict = redisCache.getObject(RedisKey.SYSDICT+fieldCode);
+		SysDictList dict = redisCache.getObject(PbpRedisKey.SYSDICT+fieldCode);
 		if(dict == null) {
 			dict = dao.fetch(SysDictList.class
 				, Cnd.where("isdelete", "=", 0)
 				.and("field_code", "=", fieldCode));
-			redisCache.setObject(RedisKey.SYSDICT+fieldCode, dict);
+			redisCache.setObject(PbpRedisKey.SYSDICT+fieldCode, dict);
 		}
 		String v = dict != null && dict.getFieldType() == 1 ? dict.getFieldValue() : "";
 		if(Func.isNotBlank(v)) {
@@ -154,12 +154,12 @@ public class DictService {
 	 * @return <pre>List&lt;KV&gt;型字段值</pre>
 	 */
 	public List<KV> getKvDicts(String fieldCode){
-		SysDictList dict = redisCache.getObject(RedisKey.SYSDICT+fieldCode);
+		SysDictList dict = redisCache.getObject(PbpRedisKey.SYSDICT+fieldCode);
 		if(dict == null) {
 			dict = dao.fetch(SysDictList.class
 				, Cnd.where("isdelete", "=", 0)
 				.and("field_code", "=", fieldCode));
-			redisCache.setObject(RedisKey.SYSDICT+fieldCode, dict);
+			redisCache.setObject(PbpRedisKey.SYSDICT+fieldCode, dict);
 		}
 		if(dict == null) return null;
 		if(dict.getFieldType() == 2 || dict.getFieldType() == 3 || dict.getFieldType() == 5) {

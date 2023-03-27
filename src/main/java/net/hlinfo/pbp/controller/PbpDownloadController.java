@@ -4,7 +4,11 @@ package net.hlinfo.pbp.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+
+import cn.hutool.core.img.Img;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
@@ -31,7 +38,7 @@ import net.hlinfo.opt.Func;
 import net.hlinfo.opt.RedisUtils;
 import net.hlinfo.pbp.entity.FilesList;
 import net.hlinfo.pbp.etc.FileUploadConf;
-import net.hlinfo.pbp.opt.RedisKey;
+import net.hlinfo.pbp.opt.PbpRedisKey;
 /**
  * 
  * @author hlinfo
@@ -40,7 +47,7 @@ import net.hlinfo.pbp.opt.RedisKey;
 @Api(tags = "下载模块")
 @RestController
 @RequestMapping("/system/pbp/download")
-public class PbpDownloadController {
+public class PbpDownloadController extends BaseController {
 	@Autowired
 	private RedisUtils redisCache;
 	
@@ -50,6 +57,7 @@ public class PbpDownloadController {
 	@Autowired
 	private Dao dao;
 	
+	@ApiOperationSupport(order = 1)
 	@ApiOperation(value="excel导出下载",notes="")
 	@GetMapping("/excel")
 	public Object excelDownload(@ApiParam("code")@RequestParam(name="code", defaultValue = "") String code
@@ -66,8 +74,8 @@ public class PbpDownloadController {
 			response.setHeader("Content-Type", "text/html;charset=UTF-8");
 			return "<script>alert('code参数不能为空');</script>";
 		}
-	    String saveFilePath = redisCache.getObject(RedisKey.DOWNLOAD+code);
-		String docTitle = redisCache.getObject(RedisKey.DOWNLOAD+code+":title");
+	    String saveFilePath = redisCache.getObject(PbpRedisKey.DOWNLOAD+code);
+		String docTitle = redisCache.getObject(PbpRedisKey.DOWNLOAD+code+":title");
 		if(Func.isBlank(saveFilePath)) {
 			response.reset();
 			response.setContentType("text/html");
@@ -111,6 +119,7 @@ public class PbpDownloadController {
 		}
 	}
 	
+	@ApiOperationSupport(order = 2)
 	@ApiOperation(value="下载文件",notes="")
 	@GetMapping("/file")
 	public Object fileDownload(@ApiParam("文件地址")@RequestParam(name="url", defaultValue = "") String url
@@ -156,6 +165,8 @@ public class PbpDownloadController {
 					.body("<script>alert('下载文件失败，原因："+e.getMessage()+"');</script>");
 		}
 	}
+	
+	@ApiOperationSupport(order = 3)
 	@ApiOperation(value="根据ID下载文件",notes="")
 	@GetMapping("/file/{id:\\w+}")
 	public Object fileDownloadById(@ApiParam("文件保存在数据库中信息的ID") @PathVariable String id
@@ -208,6 +219,93 @@ public class PbpDownloadController {
 					.body("<script>alert('下载文件失败，原因："+e.getMessage()+"');</script>");
 		}
 	}
+	
+	/**
+     * 预览图片&下载文件
+     *
+     * @param request
+     * @param response
+     */
+	@ApiOperationSupport(order = 4)
+	@ApiOperation(value="相对路径模式预览图片、PDF",notes="")
+    @GetMapping(value = "/view")
+    public Object view(
+            @ApiParam("文件地址") @RequestParam(name = "url") String url,
+            @ApiParam("显示文件名") @RequestParam(name="fileName", defaultValue = "") String fileName,
+            @ApiParam("是否强制下载，0强制下载，1预览(图片，PDF可预览，其他的为下载)") @RequestParam(name="download", defaultValue = "0") int download,
+            HttpServletRequest request, HttpServletResponse response) {
+        // 设置头部信息
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+
+        OutputStream outputStream = null;
+        try {
+            String fileUrl = url;
+            if(Func.isBlank(fileUrl)){
+                response.setStatus(404);
+                throw new RuntimeException("文件地址不能为空");
+            }
+            fileUrl = fileUrl.replace("..", "").replace("../","");
+            if (fileUrl.endsWith(StrUtil.COMMA)) {
+                fileUrl = fileUrl.substring(0, fileUrl.length() - 1);
+            }
+            String fileSavePath = url;
+    		if(url.startsWith(fileUploadConf.getBaseUrl())) {
+    			fileSavePath = fileUrl.replace(fileUploadConf.getBaseUrl(),fileUploadConf.getSavePath());
+    		}else {
+    			fileSavePath = fileUploadConf.getSavePath() + File.separator + fileUrl;
+    		}
+            File file = new File(fileSavePath);
+            if(!file.exists()){
+                response.setStatus(404);
+                throw new RuntimeException("文件["+fileUrl+"]不存在..");
+            }
+            String suffix = fileUrl.substring(fileUrl.lastIndexOf(".")).toLowerCase();
+            if(Func.isEmpty(fileName)){
+                fileName = file.getName();
+            }
+            if(!fileName.contains(StrUtil.DOT) || !fileName.endsWith(suffix)){
+                fileName = fileName + suffix;
+            }
+
+            String[] imgSuffix = new String[]{".gif",".jpg",".jpeg",".png",".bmp"};
+            if(download ==1 && Arrays.<String>asList(imgSuffix).contains(suffix)){
+                String ext = suffix.replace(".","");
+                response.setContentType("image/" + ext);
+                response.setHeader("content-type", "image/" + ext);
+                outputStream = response.getOutputStream();
+                Img.from(file).write(outputStream);
+                return ResponseEntity.ok();
+            }else if(download ==1 && Func.equals(suffix,".pdf")){
+                return ResponseEntity.ok().headers(headers)
+                        .contentLength(file.length())
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .body(new InputStreamResource(Files.newInputStream(file.toPath())));
+            }else{
+                // 设置强制下载不打开
+                // 设置响应头
+                this.setDownloadHeader(request, response, fileName,headers);
+                return ResponseEntity.ok().headers(headers)
+                        .contentLength(file.length())
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .body(new InputStreamResource(Files.newInputStream(file.toPath())));
+            }
+        } catch (IOException e) {
+            log.error("预览文件失败" + e.getMessage());
+            response.setStatus(404);
+        } finally {
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }
+        return ResponseEntity.notFound();
+    }
 	
 	/**
 	 * 设置下载头部信息

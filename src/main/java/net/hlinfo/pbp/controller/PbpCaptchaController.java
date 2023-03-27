@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,19 +19,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.CircleCaptcha;
 import cn.hutool.captcha.generator.RandomGenerator;
+import cn.hutool.core.util.HashUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.hlinfo.opt.Func;
+import net.hlinfo.opt.HashUtils;
+import net.hlinfo.opt.IpUtil;
 import net.hlinfo.opt.RedisUtils;
-import net.hlinfo.pbp.opt.RedisKey;
+import net.hlinfo.pbp.opt.PbpRedisKey;
 import net.hlinfo.pbp.opt.Resp;
 
 @Api(tags = "验证码模块")
 @Controller
 @RequestMapping("/system/pbp/captcha")
-public class PbpCaptchaController {
+public class PbpCaptchaController extends BaseController {
 	@Autowired
 	private RedisUtils redisCache;
 	
@@ -47,9 +51,10 @@ public class PbpCaptchaController {
 		c.setGenerator(randomGenerator);
 		c.setBackground(Color.decode("#E1E8F3"));
 		String code = c.getCode();
-		String verifycodekey = Func.isBlank(time)?Lang.getIP(req):(Lang.getIP(req)+":"+time);
-		String key = RedisKey.VERIFYCODE + verifycodekey;
-		redisCache.setCacheData(key, code,3);
+		String verifycodekey = Func.isBlank(time)?IpUtil.getRemoteIp(req):(IpUtil.getRemoteIp(req)+":"+time);
+		String key = PbpRedisKey.VERIFYCODE + HashUtils.sm3(verifycodekey + code + PbpRedisKey.VERIFYCODE_KEY);
+		redisCache.setObject(key, code, PbpRedisKey.VERIFYCODE_EXPIRE, TimeUnit.SECONDS);
+		log.info("获取验证码，Redis key = {}，checkCode = {}", key, code);
 		c.write(resp.getOutputStream());
 		resp.getOutputStream().flush();
 		resp.getOutputStream().close();
@@ -68,9 +73,10 @@ public class PbpCaptchaController {
 		c.setGenerator(randomGenerator);
 		c.setBackground(Color.decode("#E1E8F3"));
 		String code = c.getCode();
-		String verifycodekey = Func.isBlank(time)?Lang.getIP(req):(Lang.getIP(req)+":"+time);
-		String key = RedisKey.VERIFYCODE + verifycodekey;
-		redisCache.setCacheData(key, code,3);
+		String verifycodekey = Func.isBlank(time)?IpUtil.getRemoteIp(req):(IpUtil.getRemoteIp(req)+":"+time);
+		String key = PbpRedisKey.VERIFYCODE + HashUtils.sm3(verifycodekey + code + PbpRedisKey.VERIFYCODE_KEY);
+		redisCache.setObject(key, code, PbpRedisKey.VERIFYCODE_EXPIRE, TimeUnit.SECONDS);
+		log.info("获取验证码，Redis key = {}，checkCode = {}", key, code);
 		c.write(resp.getOutputStream());
 		resp.getOutputStream().flush();
 		resp.getOutputStream().close();
