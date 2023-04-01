@@ -4,9 +4,14 @@
 package net.hlinfo.pbp.entity;
 
 import org.nutz.dao.entity.annotation.Column;
+import org.nutz.dao.entity.annotation.Comment;
 import org.nutz.dao.entity.annotation.Table;
 
-@Table(value = "file_chunk",prefix = "pbp")
+import io.swagger.annotations.ApiModel;
+
+@Table(value = "file_chunk",prefix = "pbp_")
+@Comment("文件分片信息")
+@ApiModel("文件分片信息")
 public class FileChunk extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 

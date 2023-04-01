@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -25,10 +26,11 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
 
-//@EnableKnife4j
-//@EnableOpenApi
+@EnableKnife4j
+@EnableOpenApi
 //@Import(BeanValidatorPluginsConfiguration.class)
 @Configuration
+@AutoConfigureAfter(value = {Knife4jPBPApiInfo.class,Knife4jPBPGlobalRequestParam.class})
 @Profile({"dev", "test"})
 public class Knife4jPbpConfiguration {
 	@Value("${knife4j.enable:false}")

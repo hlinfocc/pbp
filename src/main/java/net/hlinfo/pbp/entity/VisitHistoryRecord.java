@@ -12,7 +12,7 @@ import org.nutz.dao.entity.annotation.Table;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@Table(value = "visit_history_record",prefix = "pbp")
+@Table(value = "visit_history_record",prefix = "pbp_")
 @Comment("访问历史记录表")
 @ApiModel("访问历史记录表")
 public class VisitHistoryRecord extends BaseEntity{

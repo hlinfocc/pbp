@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiModelProperty;
 import net.hlinfo.pbp.usr.adaptor.JsonbToListListValueAdaptor;
 import net.hlinfo.pbp.usr.adaptor.ListNutMapJsonAdaptor;
 
-@Table(value = "article_info",prefix = "pbp")
+@Table(value = "article_info",prefix = "pbp_")
 @Comment("通用文章表")
 @ApiModel("通用文章表")
 @TableIndexes({

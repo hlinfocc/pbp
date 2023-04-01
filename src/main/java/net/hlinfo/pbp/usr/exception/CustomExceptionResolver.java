@@ -38,7 +38,7 @@ public class CustomExceptionResolver {
 	 * 捕获全局不可知的异常
 	 * @param e
 	 * @param req
-	 * @return
+	 * @return 返回统一Resp对象信息
 	 */
 	@ExceptionHandler(value=Exception.class)
 	public Object handleException(Exception e, HttpServletRequest req) {
@@ -52,7 +52,7 @@ public class CustomExceptionResolver {
 	 * 捕获全局参数校验的异常
 	 * @param e
 	 * @param req
-	 * @return
+	 * @return 返回统一Resp对象信息
 	 */
 	@ExceptionHandler(value= { MethodArgumentNotValidException.class 
 			, UnexpectedTypeException.class})
@@ -72,9 +72,8 @@ public class CustomExceptionResolver {
 	}
 	/**
 	 * 捕获上传文件异常
-	 * @author cy
 	 * @param e
-	 * @return
+	 * @return 返回统一Resp对象信息
 	 */
 	@ExceptionHandler(value=MultipartException.class)
 	public Object fileUploadExceptionHandler(MultipartException e){
@@ -84,9 +83,8 @@ public class CustomExceptionResolver {
 	
 	/**
 	 * 捕获上传文件大小超出限制异常
-	 * @author cy
 	 * @param e
-	 * @return
+	 * @return 返回统一Resp对象信息
 	 */
 	@ExceptionHandler(value=MaxUploadSizeExceededException.class)
     public Object uploadException(MaxUploadSizeExceededException e) {
@@ -98,7 +96,7 @@ public class CustomExceptionResolver {
 	 * 捕获未登录操作异常
 	 * @param e
 	 * @param req
-	 * @return
+	 * @return 返回统一Resp对象信息
 	 */
 	@ExceptionHandler(value=NotLoginException.class)
 	public Object handleException(NotLoginException e, HttpServletRequest req) {
@@ -110,7 +108,7 @@ public class CustomExceptionResolver {
 	 * 捕获无权限操作异常
 	 * @param e
 	 * @param req
-	 * @return
+	 * @return 返回统一Resp对象信息
 	 */
 	@ExceptionHandler(value=NotPermissionException.class)
 	public Object handleException(NotPermissionException e, HttpServletRequest req) {
@@ -122,7 +120,7 @@ public class CustomExceptionResolver {
 	 * 捕获无角色操作异常
 	 * @param e
 	 * @param req
-	 * @return
+	 * @return 返回统一Resp对象信息
 	 */
 	@ExceptionHandler(value=NotRoleException.class)
 	public Object handleException(NotRoleException e, HttpServletRequest req) {

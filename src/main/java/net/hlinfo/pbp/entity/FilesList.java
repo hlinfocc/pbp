@@ -10,7 +10,7 @@ import org.nutz.dao.entity.annotation.Table;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@Table(value = "files_list",prefix="pbp")
+@Table(value = "files_list",prefix="pbp_")
 @ApiModel("文件信息")
 @Comment("文件信息")
 public class FilesList extends BaseEntity {

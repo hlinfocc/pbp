@@ -14,7 +14,7 @@ import org.nutz.dao.entity.annotation.Table;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@Table(value = "img_manager",prefix="pbp")
+@Table(value = "img_manager",prefix="pbp_")
 @Comment("图片管理")
 @ApiModel("图片管理")
 public class ImgManager extends BaseEntity{

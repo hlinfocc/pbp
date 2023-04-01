@@ -148,8 +148,8 @@ public class BaseEntity implements Serializable{
 	/**
 	 * 插入/更新， 通过id查询数据库判断，若数据库里没有则插入，否则更新
 	 * 在插入操作的时候不会调用初始化init函数进行初始化
-	 * @param dao
-	 * @return
+	 * @param dao NutzDao实例
+	 * @return 成功返回当前对象，失败返回null
 	 */
 	public Object insertOrUpdateNoInit(Dao dao) {
 		Table table = this.getClass().getAnnotation(Table.class);
@@ -191,8 +191,6 @@ public class BaseEntity implements Serializable{
 	public String getId() {
 		return id;
 	}
-
-
 
 	public void setId(String id) {
 		this.id = id;

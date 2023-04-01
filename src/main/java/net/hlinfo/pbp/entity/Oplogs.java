@@ -9,7 +9,7 @@ import org.nutz.dao.entity.annotation.Table;
 
 import io.swagger.annotations.ApiModel;
 
-@Table(value = "oplogs",prefix="pbp")
+@Table(value = "oplogs",prefix="pbp_")
 @Comment("操作日志")
 @ApiModel("操作日志")
 public class Oplogs extends BaseEntity{

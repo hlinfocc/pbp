@@ -31,8 +31,8 @@ public class DatabaseConfig {
         return new DruidDataSource();
     }
 	
-	@Bean
-	public SQLManager sqlManager(DataSource druidDataSource) {
+	@Bean(name = {"bootlSqlManager"})
+	public SQLManager bootlSqlManager(DataSource druidDataSource) {
 		DBStyle sqlStyle = new PostgresStyle();
 		// sql语句放在classpagth的/sql 目录下
 		SQLLoader loader = new ClasspathLoader("/sqls");

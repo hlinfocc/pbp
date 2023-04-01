@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@Table(value = "article_category",prefix = "pbp")
+@Table(value = "article_category",prefix = "pbp_")
 @Comment("通用文章分类表")
 @ApiModel("通用文章分类表")
 @TableIndexes({
@@ -49,11 +49,11 @@ public class ArticleCategory extends BaseEntity{
 	@ApiModelProperty(value="类别代码,如：FAQ表示常见问题")
 	private String code;
 	
-	@Column("form_template ")
+	@Column("form_template_type")
 	@ColDefine(type=ColType.INT)
 	@Comment(value="表单模板:0普通")
 	@ApiModelProperty(value="表单模板:0普通")
-	private int formTemplate;
+	private int formTemplateType;
 	
 	@Column("sort")
 	@ColDefine(type=ColType.INT)
@@ -161,21 +161,23 @@ public class ArticleCategory extends BaseEntity{
 		this.code = code;
 	}
 
+	
+
 	/**
-	 *  Getter method for property <b>formTemplate</b>.
-	 * @return property value of formTemplate
+	 *  Getter method for property <b>formTemplateType</b>.
+	 * @return property value of formTemplateType
 	 */
-	public int getFormTemplate() {
-		return formTemplate;
+	public int getFormTemplateType() {
+		return formTemplateType;
 	}
 
 	/**
-	 * Setter method for property <b>formTemplate</b>.
+	 * Setter method for property <b>formTemplateType</b>.
 	 *
-	 * @param formTemplate value to be assigned to property formTemplate
+	 * @param formTemplateType value to be assigned to property formTemplateType
 	 */
-	public void setFormTemplate(int formTemplate) {
-		this.formTemplate = formTemplate;
+	public void setFormTemplateType(int formTemplateType) {
+		this.formTemplateType = formTemplateType;
 	}
 
 	/**

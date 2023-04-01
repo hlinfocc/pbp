@@ -19,7 +19,7 @@ import net.hlinfo.pbp.usr.adaptor.PermMetaAdaptor;
 
 @ApiModel("权限")
 @Comment("权限")
-@Table(value="permission",prefix="pbp")
+@Table(value="permission",prefix="pbp_")
 @TableIndexes({
 	@Index(unique = false, fields = {"code"}),
 	@Index(unique = false, fields = {"pid"}),

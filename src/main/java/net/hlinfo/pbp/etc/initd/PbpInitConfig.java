@@ -7,12 +7,14 @@ import javax.annotation.PostConstruct;
 
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
-import org.nutz.lang.random.R;
 import org.nutz.trans.Trans;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import cn.hutool.core.collection.CollectionUtil;
+import net.hlinfo.opt.Func;
 import net.hlinfo.pbp.entity.AdminInfo;
 import net.hlinfo.pbp.entity.AdminRole;
 import net.hlinfo.pbp.entity.MimeTypes;
@@ -23,11 +25,13 @@ import net.hlinfo.pbp.opt.PwdUtils;
 import net.hlinfo.pbp.opt.vo.PermMeta;
 
 @Component
+@DependsOn(value = {"dao"})
 public class PbpInitConfig {
 	@Autowired
 	private Dao dao;
 	
 	@PostConstruct
+	@Lazy
 	public void init() {
 		int count = dao.count(Permission.class, null);
 		if(count <= 0) {
@@ -152,7 +156,12 @@ public class PbpInitConfig {
 		perm.setPid(pid);
 		perm.setSort(sort);
 		perm.setStatus(0);
-		perm.setBtns(btns);
+		if(Func.listIsEmpty(btns)) {
+			btns = new ArrayList<String>();
+			perm.setBtns(btns);
+		}else {
+			perm.setBtns(btns);
+		}
 		
 		return perm;
 	}

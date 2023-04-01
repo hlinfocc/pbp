@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import net.hlinfo.pbp.usr.adaptor.JsonbToListValueAdaptor;
 
-@Table(value = "role_permission",prefix="pbp")
+@Table(value = "role_permission",prefix="pbp_")
 @ApiModel("角色权限")
 @Comment("角色权限")
 public class RolePermission extends BaseEntity {

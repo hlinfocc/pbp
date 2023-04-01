@@ -8,9 +8,10 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import net.hlinfo.opt.Func;
+import io.swagger.annotations.ApiModel;
 import net.hlinfo.opt.Jackson;
 
+@ApiModel("分片参数")
 public class FileChunkQP {
 	private Long id;
 

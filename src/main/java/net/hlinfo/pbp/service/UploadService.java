@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import cn.dev33.satoken.stp.StpUtil;
@@ -37,6 +38,7 @@ import net.hlinfo.pbp.usr.exception.PbpException;
  * @author hlinfo
  *
  */
+@Service
 public class UploadService {
 	public static final Logger log = LoggerFactory.getLogger(UploadService.class);
 	/**
@@ -56,6 +58,13 @@ public class UploadService {
 	@Autowired
 	private Dao dao;
 	
+	/**
+	 * 上传文件
+	 * @param file MultipartFile对象
+	 * @return 文件信息
+	 * @throws PbpException
+	 * @throws Exception
+	 */
 	public FilesList upload(MultipartFile file) throws PbpException,Exception {
 			String dir = fileUploadConf.getSavePath();
 			log.debug("文件保存根目录:{}",dir);
@@ -128,7 +137,13 @@ public class UploadService {
 			data.setUserid(userid);
 			return data;
 		}
-	
+	/**
+	 * 获取后缀
+	 * @param contentType 内容类型
+	 * @param filePath 文件路径
+	 * @param orgFileName 原始文件名
+	 * @return 后缀
+	 */
 	private String getSuffix(String contentType, String filePath,String orgFileName) {
 		String suffix = "";
 		String fileSuffix = orgFileName.indexOf(".")>=0?(orgFileName.substring(orgFileName.lastIndexOf(".")).toLowerCase()):"";
@@ -163,6 +178,11 @@ public class UploadService {
 			throw new RuntimeException(e);
 		}
 	}
+	/**
+	 * 获取文件ContentType
+	 * @param filePath 文件路径
+	 * @return 文件ContentType
+	 */
 	public String getFileContentType(String filePath) {
 		try  {
 			Path path = new File(filePath).toPath();
@@ -174,12 +194,15 @@ public class UploadService {
 	}
 	/**
 	 * 生成文件名,sm3加密（时间戳和UUID）生成
-	 * @return
+	 * @return 文件名
 	 */
 	public String getFileNameBySm3() {
 		return HashUtils.sm3(System.currentTimeMillis() + Func.getRandom(10) + Func.UUID36());
 	}
-	
+	/**
+	 * 获取当前登录用户ID
+	 * @return 当前登录用户ID，匿名为anonymous
+	 */
 	private String getUserLoginId() {
 		String userId = "anonymous";
 		try {
@@ -236,7 +259,7 @@ public class UploadService {
 	 * 分片上传处理，追加模式
 	 * @param saveFileName 保存文件名
 	 * @param param 文件分片信息参数
-	 * @return
+	 * @return 结果
 	 */
 	@Deprecated
 	private boolean uploadFileByRandomAccessFile(String saveFileName, FileChunkQP param) {
@@ -256,6 +279,10 @@ public class UploadService {
         }
         return true;
     }
+	/**
+	 * @param param 分片参数
+	 * @return 是否成功
+	 */
 	@Deprecated
 	public boolean uploadAppendFile(FileChunkQP param) {
         if (null == param.getFile()) {
@@ -293,6 +320,9 @@ public class UploadService {
         this.saveFileChunk(param);
         return true;
     }
+	/**
+	 * @param param 分片参数
+	 */
 	@Deprecated
 	public void saveFileChunk(FileChunkQP param) {
         FileChunk fileChunkDo = null;
@@ -329,6 +359,7 @@ public class UploadService {
      * @param filename : 文件名
      * @param seq      : 分片序号
      * @param type     : 文件类型
+     * @return 上传结果
     */
     public Resp<String> uploadSlice(byte[] file, String hash, String filename, Integer seq, String type) {
         RandomAccessFile raf = null;
@@ -364,6 +395,7 @@ public class UploadService {
     * @param fileName : 文件名
     * @param hash     : 文件哈希值
     * @param type     : 文件类型
+    * @return 文件信息
     */
     public Resp<FilesList> uploadMergeSlice(String fileName, String type, String hash) {
         // 判断 hash 对应文件夹是否存在
@@ -452,9 +484,9 @@ public class UploadService {
     }
     
     /**
-     * 判断文件名是否带盘符，重新处理
+     * 处理文件名
      * @param fileName
-     * @return
+     * @return 过滤后的文件名
      */
     public static String getFileName(String fileName){
         // 判断是否带有盘符信息

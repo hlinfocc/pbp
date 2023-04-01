@@ -13,7 +13,7 @@ import org.nutz.dao.entity.annotation.Table;
 import io.swagger.annotations.ApiModel;
 import net.hlinfo.opt.Jackson;
 
-@Table(value = "areacode",prefix = "pbp")
+@Table(value = "areacode",prefix = "pbp_")
 @Comment("地址表")
 @ApiModel("地址表")
 public class Areacode implements Serializable {
@@ -28,7 +28,7 @@ public class Areacode implements Serializable {
 	@Column("area_name")
 	@ColDefine(notNull=true, type=ColType.TEXT)
 	@Comment(value="名称")
-	private String areaTitle;
+	private String areaName;
 	
 	@Column("type")
 	@ColDefine(notNull=true, type=ColType.INT, width=5)
@@ -38,7 +38,7 @@ public class Areacode implements Serializable {
 	@Column("parent_code")
 	@ColDefine(notNull=true, type=ColType.VARCHAR, width=20)
 	@Comment(value="父级ID")
-	private String areaParent;
+	private String parentCode;
 	
 	@Column("area_name_alias")
 	@ColDefine(notNull=false, type=ColType.TEXT)
@@ -69,20 +69,20 @@ public class Areacode implements Serializable {
 	}
 
 	/**
-	 *  Getter method for property <b>areaTitle</b>.
-	 * @return property value of areaTitle
+	 *  Getter method for property <b>areaName</b>.
+	 * @return property value of areaName
 	 */
-	public String getAreaTitle() {
-		return areaTitle;
+	public String getAreaName() {
+		return areaName;
 	}
 
 	/**
-	 * Setter method for property <b>areaTitle</b>.
+	 * Setter method for property <b>areaName</b>.
 	 *
-	 * @param areaTitle value to be assigned to property areaTitle
+	 * @param areaName value to be assigned to property areaName
 	 */
-	public void setAreaTitle(String areaTitle) {
-		this.areaTitle = areaTitle;
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
 	}
 
 	/**
@@ -103,20 +103,20 @@ public class Areacode implements Serializable {
 	}
 
 	/**
-	 *  Getter method for property <b>areaParent</b>.
-	 * @return property value of areaParent
+	 *  Getter method for property <b>parentCode</b>.
+	 * @return property value of parentCode
 	 */
-	public String getAreaParent() {
-		return areaParent;
+	public String getParentCode() {
+		return parentCode;
 	}
 
 	/**
-	 * Setter method for property <b>areaParent</b>.
+	 * Setter method for property <b>parentCode</b>.
 	 *
-	 * @param areaParent value to be assigned to property areaParent
+	 * @param parentCode value to be assigned to property parentCode
 	 */
-	public void setAreaParent(String areaParent) {
-		this.areaParent = areaParent;
+	public void setParentCode(String parentCode) {
+		this.parentCode = parentCode;
 	}
 
 	/**

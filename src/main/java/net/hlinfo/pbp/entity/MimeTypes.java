@@ -10,7 +10,7 @@ import org.nutz.dao.entity.annotation.TableIndexes;
 
 import io.swagger.annotations.ApiModel;
 
-@Table(value="mime_types",prefix = "pbp")
+@Table(value="mime_types",prefix = "pbp_")
 @ApiModel("mimetypes模块")
 @Comment("mimetypes模块")
 @TableIndexes({

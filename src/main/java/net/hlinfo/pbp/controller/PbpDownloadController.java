@@ -156,6 +156,7 @@ public class PbpDownloadController extends BaseController {
 			return ResponseEntity.ok().headers(headers)
 			.contentLength(file.length())
 			.contentType(MediaType.parseMediaType("application/octet-stream"))
+			.contentLength(file.length())
 			.body(new InputStreamResource(new FileInputStream(file)));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -210,6 +211,7 @@ public class PbpDownloadController extends BaseController {
 			return ResponseEntity.ok().headers(headers)
 					.contentLength(file.length())
 					.contentType(MediaType.parseMediaType("application/octet-stream"))
+					.contentLength(file.length())
 					.body(new InputStreamResource(new FileInputStream(file)));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -282,6 +284,7 @@ public class PbpDownloadController extends BaseController {
                 return ResponseEntity.ok().headers(headers)
                         .contentLength(file.length())
                         .contentType(MediaType.APPLICATION_PDF)
+                        .contentLength(file.length())
                         .body(new InputStreamResource(Files.newInputStream(file.toPath())));
             }else{
                 // 设置强制下载不打开
@@ -290,6 +293,7 @@ public class PbpDownloadController extends BaseController {
                 return ResponseEntity.ok().headers(headers)
                         .contentLength(file.length())
                         .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .contentLength(file.length())
                         .body(new InputStreamResource(Files.newInputStream(file.toPath())));
             }
         } catch (IOException e) {

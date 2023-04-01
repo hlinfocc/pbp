@@ -33,13 +33,13 @@ public class OpLogsService {
 	
 	/**
 	 * 操作日志
-	 * @param account
-	 * @param mokuai
-	 * @param pager
-	 * @param gongneng
-	 * @param logcontent
-	 * @param remark
-	 * @param request
+	 * @param account 账号
+	 * @param mokuai 模块
+	 * @param pager 页面
+	 * @param gongneng 功能
+	 * @param logcontent 内容
+	 * @param remark 备注
+	 * @param request HttpServletRequest对象
 	 */
 	public void addOpLogs(String account,String mokuai,String pager,String gongneng,String logcontent,String remark,HttpServletRequest request) {
 		try {
@@ -61,7 +61,7 @@ public class OpLogsService {
 	 * admin账号操作日志
 	 * @param gongneng
 	 * @param logcontent
-	 * @param request
+	 * @param request HttpServletRequest对象
 	 */
 	public void AdminAddOpLogs(String gongneng,String logcontent,HttpServletRequest request) {
 		AdminInfo userInfo = new AdminInfo();
@@ -90,6 +90,13 @@ public class OpLogsService {
 		}
 		
 	}
+	/**
+	 * 添加操作日志
+	 * @param gongneng 功能
+	 * @param logcontent 内容
+	 * @param pager 页面
+	 * @param request HttpServletRequest对象
+	 */
 	public void AdminAddOpLogs(String gongneng,String logcontent,String pager,HttpServletRequest request) {
 		AdminInfo userInfo = new AdminInfo();
 		
@@ -117,6 +124,14 @@ public class OpLogsService {
 		}
 		
 	}
+	/**
+	 * 添加操作日志
+	 * @param gongneng 功能
+	 * @param logcontent 内容
+	 * @param pager 页面
+	 * @param remark 备注
+	 * @param request HttpServletRequest对象
+	 */
 	public void AdminAddOpLogs(String gongneng,String logcontent,String pager,String remark,HttpServletRequest request) {
 		AdminInfo userInfo = new AdminInfo();
 		
@@ -143,6 +158,15 @@ public class OpLogsService {
 			log.error(e.getMessage(),e);
 		}
 	}
+	/**
+	 * 添加操作日志
+	 * @param gongneng 功能
+	 * @param logcontent 内容
+	 * @param account 账号
+	 * @param pager 页面
+	 * @param remark 备注
+	 * @param request HttpServletRequest对象
+	 */
 	public void AdminAddOpLogs(String gongneng,String logcontent,String account,String pager,String remark,HttpServletRequest request) {
 		try {
 			Oplogs logs = new Oplogs();

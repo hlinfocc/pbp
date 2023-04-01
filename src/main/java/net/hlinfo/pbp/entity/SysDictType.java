@@ -12,7 +12,7 @@ import org.nutz.dao.entity.annotation.Table;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@Table(value = "sts_dict_type",prefix="pbp")
+@Table(value = "sts_dict_type",prefix="pbp_")
 @Comment("系统数据字典分类表")
 @ApiModel("系统数据字典分类表")
 public class SysDictType extends BaseEntity {

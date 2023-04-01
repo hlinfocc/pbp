@@ -102,7 +102,7 @@ public class Resp<T> {
 	}
 	/**
 	 * 操作成功
-	 * @return
+	 * @return Resp对象
 	 */
 	public static <T>  Resp<T> SUCCESS() {
 		Resp<T> resp = NEW(OK, "操作成功");
@@ -149,7 +149,7 @@ public class Resp<T> {
 	}
 	/**
 	 * 操作失败
-	 * @return
+	 * @return Resp对象
 	 */
 	public static <T> Resp<T> FAIL() {
 		return Resp.NO_DATA("操作失败");

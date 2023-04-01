@@ -12,7 +12,7 @@ import org.nutz.dao.entity.annotation.TableIndexes;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@Table(value="admin_info",prefix="pbp")
+@Table(value="admin_info",prefix="pbp_")
 @ApiModel("管理员信息")
 @Comment("管理员信息")
 @TableIndexes({

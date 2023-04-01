@@ -1,6 +1,5 @@
 package net.hlinfo.pbp.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.nutz.dao.Cnd;
@@ -32,7 +31,7 @@ public class AreacodeService {
 	/**
 	 * 根据地址码获取地址名称
 	 * @param areaCode
-	 * @return
+	 * @return 地址名称
 	 */
 	public String getAreatitle(String areaCode) {
 		Areacode area = dao.fetch(Areacode.class
@@ -40,14 +39,14 @@ public class AreacodeService {
 		if(area == null) {
 			return "";
 		}else {
-			return area.getAreaTitle();
+			return area.getAreaName();
 		}
 	}
 	
 	/**
-	 * 根据地址码获取地址名称
+	 * 根据地址码获取地址信息
 	 * @param areaCode
-	 * @return
+	 * @return 地址信息
 	 */
 	public Areacode getAreacode(String areaCode) {
 		Areacode area = dao.fetch(Areacode.class
@@ -57,8 +56,8 @@ public class AreacodeService {
 	
 	/**
 	 * 根据地址码获取地址名称
-	 * @param areaCode
-	 * @return
+	 * @param areaCode 地址编码数组
+	 * @return 名称数组
 	 */
 	public String[] getAreacode(String[] areaCode) {
 		if(areaCode == null) {
@@ -73,15 +72,15 @@ public class AreacodeService {
 	
 	/**
 	 * 根据父地址码和地址名称获取地址代码
-	 * @param pAreaCode
-	 * @param title
-	 * @return
+	 * @param parentCode 父地址码
+	 * @param areaName 名称
+	 * @return 地址代码
 	 */
-	public String getAreacode(String pAreaCode, String title) {
+	public String getAreacode(String parentCode, String areaName) {
 		// TODO Auto-generated method stub
 		Areacode areacode = dao.fetch(Areacode.class
-				, Cnd.where("areaParent", "=", pAreaCode)
-				.and("areaTitle", "=", title));
+				, Cnd.where("parentCode", "=", parentCode)
+				.and("areaName", "=", areaName));
 		if(areacode != null) {
 			return areacode.getAreaCode();
 		}else {
@@ -93,11 +92,11 @@ public class AreacodeService {
 	 * 根据父地址码和地址名称反响获取地址代码
 	 * @param pAreaCode 父级
 	 * @param title 比如贵州省 -> 那去数据库里查贵州的，
-	 * @return
+	 * @return 地址编码
 	 */
 	public String getAreacodeFLike(String pAreaCode, String title) {
 		// TODO Auto-generated method stub
-		Cnd cnd = Cnd.where("areaParent", "=", pAreaCode)
+		Cnd cnd = Cnd.where("parentCode", "=", pAreaCode)
 			.and(new Static("'" + title + "' like concat('%', area_name, '%')"));
 		Areacode areacode = dao.fetch(Areacode.class
 			, cnd);
@@ -110,9 +109,9 @@ public class AreacodeService {
 	
 	/**
 	 * 根据经纬度获取省市区地址
-	 * @param key
-	 * @param lng
-	 * @param latpublic final Logger log = LoggerFactory.getLogger(
+	 * @param key 高德地图APikey
+	 * @param lng 经度
+	 * @param lat 纬度
 	 * @return map={
 	 * 	success: true, //成功是否
 	 * 	msg: '消息',
@@ -174,7 +173,7 @@ public class AreacodeService {
 	 @param key 地图API key
 	 @param lng 经度
 	 @param lat 纬度
-	 @return
+	 @return 地址信息
 	 */
 	public NutMap geocoderByQQMap(String key, String lng, String lat){
 		String url = "https://apis.map.qq.com/ws/geocoder/v1/?";

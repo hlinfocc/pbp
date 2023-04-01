@@ -34,12 +34,8 @@ public class Knife4jPBPGlobalRequestParam {
 	}
 	
 	/**
-     * 全局参数
-     * @return
-     */
-	/**
 	 * 生成全局通用参数 v3.x
-	 * @return
+	 * @return 全局通用参数信息
 	 */
     public List<RequestParameter> getGlobalRequestParameters() {
         List<RequestParameter> parameters = new ArrayList<>();

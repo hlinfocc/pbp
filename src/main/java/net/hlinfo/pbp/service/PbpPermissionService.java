@@ -34,8 +34,9 @@ public class PbpPermissionService {
 	
 	/**
 	 * 加载权限数据
-	 * @param pid
-	 * @return
+	 * @param pid 父级ID
+	 * @param permBtnMap 权限菜单的按钮
+	 * @return 权限数据
 	 */
 	public List<PermDTO> loadPerms(String pid,
 								  Map<String, List<String>> permBtnMap){
@@ -56,7 +57,12 @@ public class PbpPermissionService {
 		}
 		return perms;
 	}
-
+	/**
+	 * 加载权限子集
+	 * @param cnd 条件
+	 * @param permBtnMap 权限菜单的按钮
+	 * @return 带子集的权限信息
+	 */
 	public List<PermDTO> loadPerms(Cnd cnd,
 								  Map<String, List<String>> permBtnMap){
 		List<Permission> list = dao.query(Permission.class, cnd.asc("sort"));
@@ -146,9 +152,9 @@ public class PbpPermissionService {
 	
 	/**
 	 * 加载左侧菜单
-	 * @param pid
-	 * @param permSet 拥有的权限集合
-	 * @return
+	 * @param permIds 菜单ID集合
+	 * @param permBtnMap 拥有的权限集合
+	 * @return 菜单信息
 	 */
 	public List<PermDTO> loadLeftMenu(
 			Set<String> permIds,
@@ -180,7 +186,7 @@ public class PbpPermissionService {
 	}
 	/**
 	 * 获取登录成功后跳转的地址/路由
-	 * @param adminid
+	 * @param id 用户ID
 	 * @return 登录成功后跳转的地址/路由
 	 */
 	public String getLoginSuccessRoutePath(String id) {

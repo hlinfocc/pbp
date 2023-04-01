@@ -12,7 +12,7 @@ import org.nutz.dao.entity.annotation.Table;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@Table(value = "role",prefix="pbp")
+@Table(value = "role",prefix="pbp_")
 @ApiModel("角色表")
 @Comment("角色表")
 public class Role extends BaseEntity {

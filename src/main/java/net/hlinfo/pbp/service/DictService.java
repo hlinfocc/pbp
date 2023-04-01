@@ -64,7 +64,7 @@ public class DictService {
 	}
 	/**
 	 * 获取数据字典字段值集合
-	 * @param fieldCode 字段代码,多个用,逗号隔开
+	 * @param fieldCodes 字段代码,多个用,逗号隔开
 	 * @return 字段值集合
 	 */
 	public NutMap getStrDicts(String fieldCodes) {

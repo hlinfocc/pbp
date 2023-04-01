@@ -35,7 +35,7 @@ public class ArticleService {
 	/**
 	 * 以子集方式查询分类
 	 * @param pid 父级ID
-	 * @param state 状态：0启用 1禁用
+	 * @param status 状态：0启用 1禁用
 	 * @param isdisplay 是否在导航显示 0不显示，1显示
 	 * @return 以子集返回分类数据
 	 */
@@ -59,16 +59,29 @@ public class ArticleService {
 		});
 		return list;
 	}
-
+	/**
+	 * 获取分类名称
+	 * @param id 分类ID
+	 * @return 分类名称
+	 */
 	public String getCategoryName(String id) {
 		Cnd cnd = Cnd.where("id", "=", id);
 		ArticleCategory obj = dao.fetch(ArticleCategory.class, cnd);
 		return obj.getName();
 	}
+	/**
+	 * 获取分类信息
+	 * @param id 分类ID
+	 * @return 分类信息
+	 */
 	public ArticleCategory getCategory(String id) {
 		return dao.fetch(ArticleCategory.class, id);
 	}
-	
+	/**
+	 * 一键排版
+	 * @param ele 节点信息
+	 * @return 处理后的内容
+	 */
 	public Node typesetingNode(Node ele) {
     	if(ele instanceof Comment) {
     		Comment cele = (Comment)ele;
@@ -137,7 +150,11 @@ public class ArticleService {
     	
     	return ele;
     }
-    
+    /**
+     * 查找html H标签
+     * @param node Node对象
+     * @return 是否存在H标签
+     */
     public boolean findH(Node node) {
     	boolean matches = Pattern.matches("h[1-6]{1}", node.nodeName().toLowerCase().trim());
     	if(matches) {
@@ -148,6 +165,12 @@ public class ArticleService {
     	}
     	return findH(node.parent());
     }
+    /**
+     * 判断是否存在指定的H标签
+     * @param node Node对象
+     * @param x 1~6数字
+     * @return 是否存在指定的H标签
+     */
     public boolean findHx(Node node,int x) {
     	boolean matches = Pattern.matches("h"+x+"{1}", node.nodeName().toLowerCase().trim());
     	if(matches) {
@@ -191,8 +214,8 @@ public class ArticleService {
     
     /**
 	 * 获取管理员信息
-	 @param userid
-	 @return
+	 @param userid 用户ID
+	 @return 管理员信息
 	 */
 	public AdminInfo getUserInfo(String userid) {
 		AdminInfo memberInfo = redisUtils.getObject(PbpRedisKey.ADMININFO+userid);

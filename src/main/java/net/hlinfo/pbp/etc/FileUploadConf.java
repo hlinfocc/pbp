@@ -6,6 +6,7 @@ import java.util.Map;
 import org.nutz.filepool.FilePool;
 import org.nutz.filepool.NutFilePool;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,11 @@ public class FileUploadConf {
 	 */
 	private String filePoolPath = "/tmp/hlinfo/filePool";
 	/**
-	 * 是否启用相对路径,true情况下返回的文件地址不包含主机部分
+	 * 是否启用相对路径,
+	 * <p>
+	 * true情况下，baseUrl将被忽略，返回的文件地址不包含主机部分（如：/2023/03/31/568e463ad09e11ed885a9fd15165466d.pdf），
+	 * 通过/system/pbp/download/view方法进行文件的预览与下载
+	 * </p>
 	 */
 	private boolean relative = false;
 	
@@ -149,8 +154,8 @@ public class FileUploadConf {
 		return extMap;
 	}
 	
-	@Bean
-	public FilePool filePool() {
+	@Bean(name = {"myfilePool"})
+	public FilePool myfilePool() {
 		FilePool pool = new NutFilePool(filePoolPath);
 		return pool;
 	}

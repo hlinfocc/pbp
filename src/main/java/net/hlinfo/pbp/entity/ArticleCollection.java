@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @author hlinfo
  *
  */
-@Table(value="article_collection",prefix = "pbp")
+@Table(value="article_collection",prefix = "pbp_")
 @ApiModel("文章收藏表")
 @Comment("文章收藏表")
 public class ArticleCollection extends BaseEntity {

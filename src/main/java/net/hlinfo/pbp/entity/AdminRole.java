@@ -8,7 +8,7 @@ import org.nutz.dao.entity.annotation.Table;
 
 import io.swagger.annotations.ApiModel;
 
-@Table(value = "admin_role",prefix="pbp")
+@Table(value = "admin_role",prefix="pbp_")
 @ApiModel("管理员角色")
 @Comment("管理员角色")
 public class AdminRole extends BaseEntity {
