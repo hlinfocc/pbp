@@ -68,33 +68,116 @@ PBP是Spring Boot的公共基础项目模块，开箱即用，集成了knife4j�
 </project>
 ```
 
-## 2.在启动类加入@EnableHlinfoPBP注解
+## 3.配置
 
-示例：
+```yml
+server:
+  port: 1088
+    
+spring:
+  profiles:
+    active: dev #prod test
+  application: 
+    name: springBootDemo
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/example
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+        initialSize: 5
+        minIdle: 5
+        maxActive: 150
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        filters: stat,wall
+  redis:
+    database: 1
+    host: 127.0.0.1
+    port: 6379
+    password: 
+    timeout: 60000
+    jedis:
+      pool:
+        max-active: 200
+        max-idle: 10
+        min-idle: 0
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
 
-```java
-package net.hlinfo.demo;
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  type-aliases-package: com.example.entity
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+nutz:
+  dao:
+    enabled: true #是否启用Nutz
+    runtime:
+      create: true #是否自动建表 默认true
+      migration: true #是否自动变更 默认true
+      add-column: true # 是否添加列 默认true
+      delete-column: true # 是否删除列 默认true
+      foce-create: false # 是否删表重建，注意此功能会删除全部表及数据，一般应用于demo或测试 默认false
+      check-index: false # 是否检查索引 默认true
+      basepackage:  # 相关实体所在包(net.hlinfo.pbp.entity为pbp的实体路径)
+        - net.hlinfo.pbp.entity
+        - com.example.entity
 
-import net.hlinfo.pbp.opt.EnableHlinfoPBP;
+upload:
+  savePath: /www/upload
+  baseUrl: http://192.168.1.1/upload
+  relative: false
 
-@SpringBootApplication
-@EnableHlinfoPBP
-public class SpringBootDemoApplication {
+knife4j:
+  enable: true
+  production: false
+  apiinfo:
+    title: PBP系统API接口文档
+    description: PBP系统API接口文档介绍
+    terms: hlinfo.cc
+    name: ylcy
+    url: ylcxy.cn
+    email: tmp@hlinfo.net
+    version: V1.0
+  global:
+    param:
+    - name: token
+      description: AccessToken
+      scalar-type: string
+      required: false
+      parameter-type: header
 
-	public static void main(String[] args) {
-		SpringApplication.run(SpringBootDemoApplication.class, args);
-	}
-}
+logging:
+  pattern: 
+    console: "%d %p %C %m%n"
+  level: 
+    net: 
+      hlinfo: debug
+    com: 
+      github:
+        xiaoymin: error
+    org: error
+    springfox:
+      documentation: error
 
 ```
 
-## 3.配置
-
-使用nutz自动建表（实体类需要配置相关注解）
-
-
 ## 4.启动应用
 
+按照常规方式启动应用即可
+
+## 5.访问API文档
+
+访问http://127.0.0.1:1088/doc.html

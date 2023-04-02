@@ -1,5 +1,6 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+net.hlinfo.pbp.etc.hlinfoPbpAutoConfigure,\
 net.hlinfo.pbp.etc.Knife4jPbpConfiguration,\
 net.hlinfo.pbp.usr.knife4j.Knife4jPBPApiInfo,\
 net.hlinfo.pbp.usr.knife4j.Knife4jPBPGlobalRequestParam

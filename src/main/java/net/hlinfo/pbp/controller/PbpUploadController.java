@@ -29,6 +29,12 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import net.hlinfo.pbp.entity.FilesList;
 import net.hlinfo.pbp.opt.Resp;
 import net.hlinfo.pbp.opt.vo.MergeInfo;
@@ -54,6 +60,7 @@ public class PbpUploadController {
 	})
 	@PostMapping("/singleFile")
 	public Resp<FilesList> singleFile(
+			@RequestPart("file") 
 			@RequestParam(value="file",required = true) MultipartFile file
 			,HttpServletRequest request){
 		try {
@@ -67,21 +74,21 @@ public class PbpUploadController {
 			return Resp.ERROR("上传失败" + e.getMessage());
 		} 
 	}
-	
+
 	@ApiOperationSupport(order = 2)
-	@ApiOperation(value="批量文件上传方法",consumes="multipart/form-data")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name="files",value="文件流数据",dataTypeClass = MultipartFile.class,required = true,paramType = "form",dataType = "__File")
-	})
+	@Operation(summary ="批量文件上传方法")
+	@Parameter(name = "file",description = "文件",in = ParameterIn.DEFAULT,ref="file",schema = @Schema(type = "file",ref = "file"))
 	@PostMapping("/multiple")
-	public Resp<List<FilesList>> multipleFiles(@RequestPart("files") MultipartFile[] files,HttpServletRequest request){
-		if(files == null|| files.length <= 0) {
+	public Resp<List<FilesList>> multipleFiles(
+			@RequestPart(value = "files") 
+			@RequestParam("files") List<MultipartFile> files,HttpServletRequest request){
+		if(files == null|| files.size() <= 0) {
 			return new Resp<List<FilesList>>().error("文件列表为空");
 		}
 		try {
 			List<FilesList> fileList = new ArrayList<FilesList>();
-			for(MultipartFile file : files) {
-				FilesList fileInfo = uploadService.upload(file);
+			for(MultipartFile fileItem : files) {
+				FilesList fileInfo = uploadService.upload(fileItem);
 				fileList.add(fileInfo);
 			}
 			return Resp.OK("上传成功", fileList);
@@ -99,8 +106,9 @@ public class PbpUploadController {
 	@ApiImplicitParams({
 		@ApiImplicitParam(name="file",value="文件流数据",required = true,paramType = "form",dataType = "__File")
 	})
-	@PostMapping("/singleFileSaveDB")
+	@PostMapping("/singleSaveDB")
 	public Resp<FilesList> singleFileSaveDB(
+			@RequestPart("file") 
 			@RequestParam(value="file",required = true) MultipartFile file
 			,HttpServletRequest request){
 		try {
