@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,7 +44,7 @@ public class PbpRoleController extends BaseController {
 	private Dao dao;
 	
 	@Autowired
-	private SQLManager sqlManager;
+	private SQLManager beetlSqlManager;
 	
 	@Autowired
 	private PbpPermissionService permissionService;
@@ -72,7 +73,7 @@ public class PbpRoleController extends BaseController {
     }
 
     @ApiOperation(value = "删除角色")
-    @DeleteMapping("/delete")
+    @RequestMapping(value = {"/delete"},method = {RequestMethod.DELETE,RequestMethod.GET})
     public Resp<Integer> delete(@RequestParam("id") String id) {
         int count = dao.count(AdminRole.class, Cnd.where("roleid", "=", id));
         if (count > 0) {
@@ -103,7 +104,7 @@ public class PbpRoleController extends BaseController {
         String userid = this.getLoginId();
 		int type = this.getLoginType();
 		System.out.println("type=" + type);
-		int maxPow = sqlManager.selectSingle("pbp.account.queryMaxPow", NutMap.NEW().addv("adminid", userid).addv("type", type), Integer.class);
+		int maxPow = beetlSqlManager.selectSingle("pbp.account.queryMaxPow", NutMap.NEW().addv("adminid", userid).addv("type", type), Integer.class);
 		cnd.and("pow", "<=", maxPow);
         Pager pager = dao.createPager(page, limit);
         pager.setRecordCount(dao.count(Role.class, cnd));

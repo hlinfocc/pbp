@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -89,7 +90,7 @@ public class PbpSysDictListController {
 	}
 
 	@ApiOperation(value = "系统数据字典-软删除")
-	@DeleteMapping("/delete")
+	@RequestMapping(value = {"/delete"},method = {RequestMethod.DELETE,RequestMethod.GET})
 	public Resp delete(@RequestParam("id") String id
 			, HttpServletRequest request) {
 		if (Strings.isBlank(id)) {

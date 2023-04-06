@@ -30,7 +30,7 @@ public class PbpPermissionService {
 	private Dao dao;
 	
 	@Autowired
-	private SQLManager sqlManager;
+	private SQLManager beetlSqlManager;
 	
 	/**
 	 * 加载权限数据
@@ -91,7 +91,7 @@ public class PbpPermissionService {
 	public NutMap getPermSetByRoleid(String roleid){
 		System.out.println("roleid=="+roleid);
 		NutMap para = NutMap.NEW().addv("roleid", roleid);
-		List<NutMap> permList = sqlManager.select("pbp.account.queryRolePermid", NutMap.class, para);
+		List<NutMap> permList = beetlSqlManager.select("pbp.account.queryRolePermid", NutMap.class, para);
 		Set<String> permIds = new HashSet<String>();
 		Map<String, List<String>> permBtnMap = new HashMap<>();
 		permList.forEach(perm -> {
@@ -126,7 +126,7 @@ public class PbpPermissionService {
 	public NutMap getPermSetByUserid(int type, String userid){
 		NutMap para = NutMap.NEW()
 				.addv("userid", userid);
-		List<NutMap> permList = sqlManager.select("pbp.account.queryUserPermid", NutMap.class, para);
+		List<NutMap> permList = beetlSqlManager.select("pbp.account.queryUserPermid", NutMap.class, para);
 		Set<String> permIds = new HashSet<String>();
 		Map<String, List<String>> permBtnMap = new HashMap<>();
 		permList.forEach(perm -> {
@@ -190,7 +190,7 @@ public class PbpPermissionService {
 	 * @return 登录成功后跳转的地址/路由
 	 */
 	public String getLoginSuccessRoutePath(String id) {
-		String queryLoginSuccessUrl = sqlManager.selectSingle("pbp.account.queryLoginSuccessUrl", NutMap.NEW().addv("adminid", id), String.class);
+		String queryLoginSuccessUrl = beetlSqlManager.selectSingle("pbp.account.queryLoginSuccessUrl", NutMap.NEW().addv("adminid", id), String.class);
 		return queryLoginSuccessUrl;
 	}
 }

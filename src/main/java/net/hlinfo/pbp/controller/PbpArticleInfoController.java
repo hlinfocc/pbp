@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -483,7 +484,7 @@ public class PbpArticleInfoController extends BaseController{
 	}
 	
 	@ApiOperation(value="删除")
-	@DeleteMapping("/delete")
+	@RequestMapping(value = {"/delete"},method = {RequestMethod.DELETE,RequestMethod.GET})
 	public Resp<String> delete(@RequestParam("id") String id, HttpServletRequest request){
 		if(Strings.isBlank(id)) {
 			return new Resp<String>().error("id不能为空");
@@ -505,7 +506,7 @@ public class PbpArticleInfoController extends BaseController{
 	}
 	
 	@ApiOperation(value="清空所有撤稿")
-	@DeleteMapping("/clear")
+	@RequestMapping(value = {"/clear"},method = {RequestMethod.DELETE,RequestMethod.GET})
 	public Resp<String> clear(HttpServletRequest request){
 		Chain chain = Chain.make("isdelete", 1);
 		int rs = dao.update(ArticleInfo.class, chain, Cnd.where("status", "=", 3));

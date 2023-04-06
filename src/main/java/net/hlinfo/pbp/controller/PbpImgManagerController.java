@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -70,7 +71,7 @@ public class PbpImgManagerController  extends BaseController {
 	
 	
 	@ApiOperation(value="删除")
-	@DeleteMapping("/delete")
+	@RequestMapping(value = {"/delete"},method = {RequestMethod.DELETE,RequestMethod.GET})
 	@SaCheckPermission(value= {AuthType.Root.PERM,AuthType.Admin.PERM})
 	@SaCheckLogin
 	public Resp delete(@RequestParam("id") String id){

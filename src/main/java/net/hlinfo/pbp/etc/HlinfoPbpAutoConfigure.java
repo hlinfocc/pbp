@@ -37,6 +37,6 @@ import net.hlinfo.utils.spring.configure.HlinfoMybatisDaoAutoConfiguration;
 })
 @AutoConfigureAfter(value = {MybatisAutoConfiguration.class})
 @AutoConfigureBefore(value = {HlinfoMybatisDaoAutoConfiguration.class})
-public class hlinfoPbpAutoConfigure {
+public class HlinfoPbpAutoConfigure {
 	
 }
