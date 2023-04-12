@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartException;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.exception.NotRoleException;
+import cn.hutool.core.util.ReUtil;
 import net.hlinfo.pbp.opt.Resp;
 
 
@@ -43,7 +44,12 @@ public class CustomExceptionResolver {
 	@ExceptionHandler(value=Exception.class)
 	public Object handleException(Exception e, HttpServletRequest req) {
 		log.error("全局异常处理...",e);
-		return new Resp<>().error("服务器或网络异常").data(NutMap.NEW()
+		String msg = "操作失败";
+		boolean isMatch = ReUtil.contains("[\\u4E00-\\u9FFF]+", e.getMessage());
+		if(isMatch) {
+			msg = "操作失败，" + e.getMessage();
+		}
+		return new Resp<>().error(msg).data(NutMap.NEW()
 			.addv("url", req.getRequestURL())
 			.addv("message", e.getMessage())
 			.addv("stackTrace", e.getStackTrace()));
@@ -58,16 +64,20 @@ public class CustomExceptionResolver {
 			, UnexpectedTypeException.class})
 	public Object handleException(MethodArgumentNotValidException e, HttpServletRequest req) {
 		log.error("参数异常处理...",e);
-		String msg = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+		StringBuffer sb = new StringBuffer();
 		List<NutMap> errorMaps = new ArrayList<>();
 		for (ObjectError error : e.getBindingResult().getAllErrors()) {
 			NutMap errorMap = NutMap.WRAP(Json.toJson(error));
 			errorMap.remove("arguments");
 			errorMap.remove("codes");
 			errorMaps.add(errorMap);
+			if(sb.length()>0){
+				sb.append(";<br>");
+			}
+			sb.append(error.getDefaultMessage());
 		}
 		e.printStackTrace();
-		return new Resp<>().error(msg).data(errorMaps);
+		return new Resp<>().error(sb.toString()).data(errorMaps);
 		
 	}
 	/**
