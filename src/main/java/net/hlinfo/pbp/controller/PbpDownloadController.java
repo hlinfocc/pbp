@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 
 import cn.hutool.core.img.Img;
+import cn.hutool.core.img.ImgUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
@@ -233,8 +234,8 @@ public class PbpDownloadController extends BaseController {
     @GetMapping(value = "/view")
     public Object view(
             @ApiParam("文件地址") @RequestParam(name = "url") String url,
+            @ApiParam("是否强制下载，0强制下载，1预览(图片，PDF可预览，其他的为下载)") @RequestParam(name="f", defaultValue = "0") int f,
             @ApiParam("显示文件名") @RequestParam(name="fileName", defaultValue = "") String fileName,
-            @ApiParam("是否强制下载，0强制下载，1预览(图片，PDF可预览，其他的为下载)") @RequestParam(name="download", defaultValue = "0") int download,
             HttpServletRequest request, HttpServletResponse response) {
         // 设置头部信息
         HttpHeaders headers = new HttpHeaders();
@@ -242,6 +243,7 @@ public class PbpDownloadController extends BaseController {
         headers.add("Pragma", "no-cache");
         headers.add("Expires", "0");
 
+        int download = f;
         OutputStream outputStream = null;
         try {
             String fileUrl = url;
@@ -276,10 +278,10 @@ public class PbpDownloadController extends BaseController {
             if(download ==1 && Arrays.<String>asList(imgSuffix).contains(suffix)){
                 String ext = suffix.replace(".","");
                 response.setContentType("image/" + ext);
-                response.setHeader("content-type", "image/" + ext);
                 outputStream = response.getOutputStream();
-                Img.from(file).write(outputStream);
-                return ResponseEntity.ok();
+                Img img = new Img(ImgUtil.read(file),ext);
+                img.write(outputStream);
+                return null;
             }else if(download ==1 && Func.equals(suffix,".pdf")){
                 return ResponseEntity.ok().headers(headers)
                         .contentLength(file.length())
