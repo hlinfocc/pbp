@@ -1,5 +1,7 @@
 package net.hlinfo.pbp.entity;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 
@@ -8,7 +10,9 @@ import org.nutz.dao.entity.annotation.ColType;
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Comment;
 import org.nutz.dao.entity.annotation.Default;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -102,6 +106,14 @@ public class AccountInfo extends BaseEntity {
 	@Comment(value="这一次登陆ip")
 	@ApiModelProperty(value="这一次登陆ip")
 	private String thatLoginIp;
+	
+	@Column("pwd_modify_time")
+	@ColDefine(notNull=false, type=ColType.DATETIME, width=25)
+	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@Comment(value="密码最后修改时间")
+	@ApiModelProperty(value="密码最后修改时间")
+	private Date pwdModifyTime;
 	
 	/**
 	 * 更新上一次登录信息
@@ -334,6 +346,23 @@ public class AccountInfo extends BaseEntity {
 	 */
 	public void setThatLoginIp(String thatLoginIp) {
 		this.thatLoginIp = thatLoginIp;
+	}
+
+	/**
+	 *  Getter method for property <b>pwdModifyTime</b>.
+	 * @return property value of pwdModifyTime
+	 */
+	public Date getPwdModifyTime() {
+		return pwdModifyTime;
+	}
+
+	/**
+	 * Setter method for property <b>pwdModifyTime</b>.
+	 *
+	 * @param pwdModifyTime value to be assigned to property pwdModifyTime
+	 */
+	public void setPwdModifyTime(Date pwdModifyTime) {
+		this.pwdModifyTime = pwdModifyTime;
 	}
 
 }
